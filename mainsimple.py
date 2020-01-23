@@ -34,13 +34,12 @@ for j in range(numgenmax):
 # time to make children
     population2 = population.copy()
     newchildren = recombination.createchildren(population2, parentindex, "clone", numslots, fitnesses = popfit.copy())
-    print(population)
-    print(population2)
-    print(newchildren)
+#    print(population)
+    print("New children: ",newchildren)
     population.extend(newchildren)
 #    for i in range(parents):
 #        population.append(population[parentindex[i]]) # this should call recombination instead of just a clone
-    print(population)
+#    print(population)
 
 # call the cull function to identify low-fitness solutions within the population
     survivorindex = survivor_selection.cull(retirees, fitnesses = popfit.copy())
@@ -48,5 +47,5 @@ for j in range(numgenmax):
 # remove the solutions returned by cull
     for i in range(retirees):
         population.pop(survivorindex[i])
-    print(population)
+#    print(population)
     # needs code here to decide whether to break loop
