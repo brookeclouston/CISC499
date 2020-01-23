@@ -1,19 +1,20 @@
+
 """
-Selects the surviors based off of the fitnesses of the functions, want the fitness to
-be 0 so the fitness function is sorted in descending order 
-:param retiree: number of retirees to removed from fitness functions
-:param fitnesses: list of fitnesses 
+Function: cull
+Selects which candidates to retiree based on their fitness. The first n candidates with the
+lowest fitnesses are selected as candidates to be removed, list of their indexes returned.
+:param num_retirees: Number of candidates to "retire"
+:param fitnesses:    List of current population fitnesses 
+:returns:            List of indexes of candidates to retire 
 """
-def select_survivor(retirees, fitnesses):
-    to_retire = []
-    sorted_fitnesses = sorted(fitnesses, reverse=True)
-    for retiree in range(retirees):
-        retire_index = fitnesses.index(sorted_fitnesses[retiree])
-        if retire_index not in to_retire:
-            to_retire.append(retire_index)
-        else: 
-            retiree += 1
-            retire_index = fitnesses.index(sorted_fitnesses[retiree])
-            to_retire.append(retire_index)
-            # fixme need to make this better
-    return to_retire
+def cull(num_retirees, fitnesses):
+    retiree_list = [0] * num_retirees
+    for retiree in range(num_retirees):
+        min = 99999
+        for j, value in enumerate(fitnesses):
+            if value < min:
+                min = value
+                index = j
+        retiree_list[retiree] = index
+        fitnesses[index] = 99999
+    return retiree_list

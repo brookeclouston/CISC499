@@ -17,16 +17,17 @@ from numpy.random import randint
 # numbers are generated the same each time by fixing the seed.
 
 #seed(1)
-
+"""
+Function: init
+Creats inital population randomly
+:param courses: Number of courses
+:param slots:   Number of courses
+:param popsize: Size of inital population
+:returns:       List containing inital population of candidate solutions
+"""
 def init(courses, slots, popsize):
-    """This function creates the initial population for GA"""
-
-    population = [[0]*courses for i in range(popsize)]
+    population = [[0] * courses for i in range(popsize)]
     for i in range(popsize):
         for j in range(courses):
-            population[i][j] = randint(1,slots+1)
+            population[i][j] = randint(1, slots+1)
     return population
-
-# Print the output for unit testing
-
-print(init(10,100,3))
