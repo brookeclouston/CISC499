@@ -11,8 +11,3 @@ def fitness(solution):
     for i in range(len(solution)):
         fitvalue += solution[i]
     return fitvalue
-
-
-
-
-# print(fitness([0,1,2,3,4,5]))
