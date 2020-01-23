@@ -16,7 +16,7 @@ from numpy.random import randint
 # Remove the comment from the line below to make sure the 'random'
 # numbers are generated the same each time by fixing the seed.
 
-# seed(1)
+#seed(1)
 
 def init(courses, slots, popsize):
     """This function creates the initial population for GA"""
