@@ -29,4 +29,4 @@ def init(courses, slots, popsize):
 
 # Print the output for unit testing
 
-print(init(10,100,3))
+# print(init(10,100,3))
