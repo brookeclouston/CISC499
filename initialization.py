@@ -29,14 +29,5 @@ def init(courses, slots, popsize):
     population = [[0] * courses for i in range(popsize)]
     for i in range(popsize):
         for j in range(courses):
-<<<<<<< HEAD
             population[i][j] = randint(1, slots+1)
     return population
-=======
-            population[i][j] = randint(1,slots+1)
-    return population
-
-# Print the output for unit testing
-
-# print(init(10,100,3))
->>>>>>> ed61a0e6c7413983a22853e12ae2ccc5ac996114
