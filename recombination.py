@@ -41,4 +41,3 @@ def mutate(child, mutatechance, maxvalue):
             pass
 #            print("Not today")
 #    print(child)
-# mutate([3,6,9,12,15,18],.10)
