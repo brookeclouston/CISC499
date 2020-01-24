@@ -17,17 +17,37 @@ from numpy.random import randint
 # numbers are generated the same each time by fixing the seed.
 
 #seed(1)
+
+"""
+Function: create_time_table
+Creats inital time table to keep track of profs and time sections.
+:param profs:    Number of profs
+:param sections: Number of time sections
+:returns:        Nested matrix of numberd prof vs time slot
+"""
+def create_time_table(profs, sections):
+    time_table = [[0] * sections for i in range(profs)] 
+    counter = 1
+    for i, row in enumerate(time_table):
+        for j, col in enumerate(row):
+            time_table[i][j] = counter
+            counter += 1
+    return time_table
+
+
 """
 Function: init
 Creats inital population randomly
-:param courses: Number of courses
-:param slots:   Number of courses
-:param popsize: Size of inital population
-:returns:       List containing inital population of candidate solutions
+:param courses:         Number of courses
+:param popsize:         Size of inital population
+:param time_table_size: Size of inital time table (upper range of possible slot value)
+:returns:               List containing inital population of candidate solutions
 """
-def init(courses, slots, popsize):
+def init(courses, popsize, time_table_size):
     population = [[0] * courses for i in range(popsize)]
     for i in range(popsize):
         for j in range(courses):
-            population[i][j] = randint(1, slots+1)
+            population[i][j] = randint(1, time_table_size+1)
     return population
+
+

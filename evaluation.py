@@ -1,13 +1,18 @@
-# simple version of the fitness function, for testing other functions
-# input is a 'solution', represented as a 1xn array
-# the function currently adds the values together and returns the sum
-#TODO: Brooke to write
+"""
+hard constarints 
+- no conflicts between classes
+"""
 
-import numpy
 
-def fitness(solution):
-    """This function evaluates the fitness of a candidate solution"""
-    fitvalue = 0
-    for i in range(len(solution)):
-        fitvalue += solution[i]
-    return fitvalue
+
+"""
+Function: basic_fitness
+Calculates a basic fitness value for a candidate solution based on 100 - number of conflicts
+:param candidate_solution: Proposed soltion to calculate fitness for
+:param time_table:         Existing time table (not currently used, but could be interesting to play with)
+:returns:                  Integer representing computed fitness
+"""
+def basic_fitness(candidate_solution, time_table):
+    duplicates = set([x for x in candidate_solution if candidate_solution.count(x) > 1])
+    return 100 - len(duplicates)
+
