@@ -1,22 +1,30 @@
-# Initialization script to be written by Rick
+"""
+Initialization script to be written by Rick
 
-# This script will create an initial population of candidate timetables.
-# Each timetable will be represented as an array of values.
-# Each value will represent a timeslot/room pairing for one of the courses
-# to be timetabled.
-# Input values will include the number of courses, number of entries
-# in the timeslot/room grid, and population size.
-# Return value will be a 2d array, with a list of candidate timetables,
-# each with a list of course assignments to a time/room slot.
+This script will create an initial population of candidate timetables.
+Each timetable will be represented as an array of values.
+Each value will represent a timeslot/room pairing for one of the courses
+to be timetabled.
+Input values will include the number of courses, number of entries
+in the timeslot/room grid, and population size.
+Return value will be list of the following:
+[0] - Population.  List of courses.  Each course is dict, with key=name and value=dict (keys: enrolment, time, room, prof; 
+values: enrolment, assigned timeslot index, assigned room name, prof index).
+[1] - Courses.  Dict of courses, with key=name and value=enrolment.
+[2] - Rooms.  Dict of rooms, with key=name and value=capacity.
+[3] - Profs.  List of instructors.
+[4] - Times.  List of timeslots 
+"""
 
 import numpy
 from numpy.random import seed
 from numpy.random import randint
 import config
+
 # Remove the comment from the line below to make sure the 'random'
 # numbers are generated the same each time by fixing the seed.
 
-#seed(1)
+# seed(1)
 
 """
 Function: init
@@ -26,25 +34,31 @@ Creats inital population randomly
 """
 def init(popsize):
     courses = config.config_courses()
-    rooms = len(config.config_rooms())
-    profs = len(config.config_profs())
-    sections = len(config.config_sections())
+    rooms = config.config_rooms()
+    profs = config.config_profs()
+    times = config.config_sections()
     population = []
     while popsize != 0:
         candidate = {}
         for course, enrollment in courses.items():
-            section = randint(0, sections)
-            room = randint(0, rooms)
-            prof = randint(0, profs)
-            candidate[course] = {"enrollment": enrollment, "section": section, "room": room, "prof": prof}
-        population.append([candidate])
+            timeslot = randint(0, len(times))
+            room = randint(0, len(rooms))
+            prof = randint(0, len(profs))
+            candidate[course] = {"enrollment": enrollment, "time": timeslot, "room": room, "prof": prof}
+        population.append(candidate)
         popsize -= 1
-    return population
+    return [population, courses, rooms, profs, times]
 
-"""
-#UNCOMMENT TO SEE EXAMPLE
+
+# UNCOMMENT TO SEE EXAMPLE
 solutions = (init(5))
 print(solutions)
+
+for solution in solutions:
+    print()
+    print(solution)
+    print()
+"""
 for solution in solutions:
     print()
     for key, value in solution.items():
