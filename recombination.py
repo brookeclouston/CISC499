@@ -26,7 +26,7 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
         if constraints.recombtype == "clone":
             # clone simply selects a parent at random, and returns a copy of that parent as a child
             parent_key = randint(0,len(parents))
-            print(parent_key)
+            #print(parent_key)
             newpop = populationcopy[:]
             #print("population copy",populationcopy)
             #print("newpop",newpop)
@@ -47,7 +47,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
     """
     Takes a child solution (dict of dicts), number of rooms, number of times, and chance for mutation
     """
-    print(child_param)
+    #print(child_param)
     child = copy.deepcopy(child_param)
     for course in child:
         if course == 'Fitness':
@@ -58,7 +58,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
 # Room mutation?
         else:
             if np.random.rand() < mutatechance:
-                print("Room mutation time!")
+                #print("Room mutation time!")
                 # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
                 if np.random.rand() < .5:
                     if child[course]['room'] >= num_rooms-1:
@@ -72,10 +72,10 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
                         child[course]['room'] -= 1
             else:
                 pass
-                print("No room change")
+                #print("No room change")
 # Time mutation?
             if np.random.rand() < mutatechance:
-                print("Time mutation time!")
+                #print("Time mutation time!")
                 # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
                 if np.random.rand() < .5:
                     if child[course]['time'] >= num_times-1:
@@ -89,6 +89,6 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
                         child[course]['time'] -= 1
             else:
                 pass
-                print("No time change")
-    print("new child (mut):",child)
+                #print("No time change")
+    #print("new child (mut):",child)
     return child

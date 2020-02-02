@@ -43,7 +43,7 @@ def select_parents_tournament(y_parents, fitnesses):
     index = []
     for i in range(y_parents):
         parent_sublist[i] = randint(0,len(fitnesses))
-    print(parent_sublist)
+    #print(parent_sublist)
 # parent_sublist[] now has randomly selected index values from the master parent list
 # loop through these and find the highest fitness
     max = 0
