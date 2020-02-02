@@ -3,50 +3,37 @@ Config file to parse data from csv files
 """
 import csv
 
-""" Function: config_courses 
-Reads in course names and enrollment numbers from config file
-:returns: Dictionary of {course_name(string): enrollemnts(int)}
-"""
+
+
 def config_courses(course_file="data/courses.csv"):
-    courses = {}
-    with open(course_file, "r") as course:
-        csv_reader = csv.reader(course, delimiter=',')
-        for row in csv_reader:
-            courses[row[0]] = int(row[1])
-    return courses
+    """ Function: config_courses 
+    Reads in courses and attributes (name, enrollment, etc.) from config file
+    :returns: List of dictionaries.  Each list item is a course, and each dictionary includes key/value pair attributes from config file
+    """
+    reader = csv.DictReader(open(course_file))
+    dict_list = []
+    for line in reader:
+        dict_list.append(line)
+    return dict_list
 
-""" Function: config_rooms 
-Reads in room names and room capacity from config file
-:returns: Dictionary of {room_name(string): room_capacity(int)}
-"""
+
 def config_rooms(room_file="data/rooms.csv"):
-    rooms = {}
-    with open(room_file, "r") as room:
-        csv_reader = csv.reader(room, delimiter=',')
-        for row in csv_reader:
-            rooms[row[0]] = int(row[1])
-    return rooms
+    """ Function: config_rooms 
+    Reads in rooms and attributes (name, room capacity, etc.) from config file
+    :returns: List of dictionaries.  Each list item is a room, and each dictionary includes key/value pair attributes from config file
+    """
+    return config_courses(room_file)
 
-""" Function: config_profs 
-Reads in prof names from config file
-:returns: List of profs
-"""
 def config_profs(prof_file="data/profs.csv"):
-    profs = []
-    with open(prof_file, "r") as prof:
-        csv_reader = csv.reader(prof, delimiter=',')
-        for row in csv_reader:
-            profs.append(row)
-    return profs[0]
+    """ Function: config_profs 
+    Reads in instructors and attributes (name, etc.) from config file
+    :returns: List of dictionaries.  Each list item is a prof, and each dictionary includes key/value pair attributes from config file
+    """
+    return config_courses(prof_file)
 
-""" Function: config_sections 
-Reads in section titles from config file
-:returns: List of sections
-"""
-def config_sections(section_file="data/sections.csv"):
-    sections = []
-    with open(section_file, "r") as section:
-        csv_reader = csv.reader(section, delimiter=',')
-        for row in csv_reader:
-            sections.append(row)
-    return sections[0]
+def config_times(time_file="data/sections.csv"):
+    """ Function: config_times 
+    Reads in time slots and attributes (name, etc.) from config file
+    :returns: List of dictionaries.  Each list item is a time slot, and each dictionary includes key/value pair attributes from config file
+    """
+    return config_courses(time_file)

@@ -8,12 +8,12 @@ to be timetabled.
 Input values will include the number of courses, number of entries
 in the timeslot/room grid, and population size.
 Return value will be list of the following:
-[0] - Population.  List of courses.  Each course is dict, with key=name and value=dict (keys: enrolment, time, room, prof; 
-values: enrolment, assigned timeslot index, assigned room name, prof index).
-[1] - Courses.  Dict of courses, with key=name and value=enrolment.
-[2] - Rooms.  Dict of rooms, with key=name and value=capacity.
-[3] - Profs.  List of instructors.
-[4] - Times.  List of timeslots 
+[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name and value=dict (keys: time, room, prof; 
+values: assigned timeslot index, assigned room index, assigned prof index).
+[1] - Courses.  Dictionary of courses, with keys and values based on config file.
+[2] - Rooms.  Dictionary of rooms, with keys and values based on config file.
+[3] - Profs.  Dictionary of instructors, with keys and values based on config file.
+[4] - Times.  Dictionary of timeslots, with keys and values based on config file.
 """
 
 import numpy
@@ -36,28 +36,36 @@ def init(popsize):
     courses = config.config_courses()
     rooms = config.config_rooms()
     profs = config.config_profs()
-    times = config.config_sections()
+    times = config.config_times()
     population = []
     while popsize != 0:
         candidate = {}
-        for course, enrollment in courses.items():
+        for course in enumerate(x['Course'] for x in courses):
+            this_course = course[1]
             timeslot = randint(0, len(times))
             room = randint(0, len(rooms))
             prof = randint(0, len(profs))
-            candidate[course] = {"enrollment": enrollment, "time": timeslot, "room": room, "prof": prof}
+            candidate[this_course] = {"time": timeslot, "room": room, "prof": prof}
         population.append(candidate)
         popsize -= 1
     return [population, courses, rooms, profs, times]
 
 
 # UNCOMMENT TO SEE EXAMPLE
+"""
 solutions = (init(5))
-print(solutions)
+print("Solutions: ",solutions)
 
-for solution in solutions:
+for i, solution in enumerate(solutions):
     print()
-    print(solution)
+    if i == 0:
+        print(solution)
+        for j, candidate in enumerate(solution):
+            print("candidate",j,":",candidate)
+    else:
+        print(solution)
     print()
+"""
 """
 for solution in solutions:
     print()
