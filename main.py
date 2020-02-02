@@ -13,16 +13,16 @@ generation = constraints.numgenmax
 while generation > 0 and best_fitness < 100:
     print("GENERATION: ", abs(generation-constraints.numgenmax))
 
-    print("STARTING POPULATION: ", pop)
+    #print("STARTING POPULATION: ", pop)
     
     # Calculate fitness scores for each gene in population
     for candidate_solution in range(constraints.pop_size):
-        pop[candidate_solution].append(evaluation.basic_fitness(pop[candidate_solution]))
+        pop[candidate_solution].append(evaluation.calc_fitness(pop[candidate_solution]))
    
     fitnesses = [x[1] for x in pop]
     print("FITNESS VALUES: ", fitnesses)
-    best_fitness = max(fitness)
-    print("BEST FITTNESS:   ", best_fitnesses)
+    best_fitness = max(fitnesses)
+    print("BEST FITNESS:   ", best_fitness)
     
     exit() # Place holder, below has not been re modelled 
 

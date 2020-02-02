@@ -33,9 +33,9 @@ def init(popsize):
     while popsize != 0:
         candidate = {}
         for course, enrollment in courses.items():
-            section = randint(1, sections+1)
-            room = randint(1, rooms+1)
-            prof = randint(1, profs+1)
+            section = randint(0, sections)
+            room = randint(0, rooms)
+            prof = randint(0, profs)
             candidate[course] = {"enrollment": enrollment, "section": section, "room": room, "prof": prof}
         population.append([candidate])
         popsize -= 1
