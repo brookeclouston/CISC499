@@ -8,8 +8,17 @@ Calculates a fitness value for a candidate solution based on number of conflicts
 """
 def calc_fitness(candidate_solution):
     fitness = 100
-    hc = hard_constraints(candidate_solution[0])
+    hc = 0 #hard_constraints(candidate_solution[0])
     sc = 0
+    for course in candidate_solution:
+        #print(course)
+        if course == 'Fitness':
+            exit
+        else:
+            #print(candidate_solution[course],'->',candidate_solution[course]['time'])
+            new_hc = candidate_solution[course]['time']
+            hc += new_hc
+            #print(hc)
     return fitness - hc - sc
 
 """
