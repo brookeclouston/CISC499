@@ -37,3 +37,10 @@ def config_times(time_file="data/sections.csv"):
     :returns: List of dictionaries.  Each list item is a time slot, and each dictionary includes key/value pair attributes from config file
     """
     return config_courses(time_file)
+
+def config_profcourselinks(profcourse_file="data/profcourse.csv"):
+    """ Function: config_profcourselinks 
+    Reads in instructor/course pairings config file
+    :returns: List of dictionaries.  Each list item is a prof/course combination, represented as a dictionary with keys Prof and Course 
+    """
+    return config_courses(profcourse_file)

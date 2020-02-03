@@ -14,6 +14,7 @@ values: assigned timeslot index, assigned room index, assigned prof index).
 [2] - Rooms.  Dictionary of rooms, with keys and values based on config file.
 [3] - Profs.  Dictionary of instructors, with keys and values based on config file.
 [4] - Times.  Dictionary of timeslots, with keys and values based on config file.
+[5] - Prof/Course Links.  Dictionary of prof/course pairings, keys and values based on config file.
 """
 
 import numpy
@@ -37,6 +38,7 @@ def init(popsize):
     rooms = config.config_rooms()
     profs = config.config_profs()
     times = config.config_times()
+    profcourses = config.config_profcourselinks()
     population = []
     while popsize != 0:
         candidate = {}
@@ -48,7 +50,7 @@ def init(popsize):
             candidate[this_course] = {"time": timeslot, "room": room, "prof": prof}
         population.append(candidate)
         popsize -= 1
-    return [population, courses, rooms, profs, times]
+    return [population, courses, rooms, profs, times, profcourses]
 
 
 # UNCOMMENT TO SEE EXAMPLE

@@ -6,13 +6,14 @@ import recombination
 import constraints
 
 
-# Call the initialization script to build the population for generation 0
+# Call the initialization script to collect configuration data from csv files and build the population for generation 0
 init_items = initialization.init(constraints.pop_size)
 pop = init_items[0]
 courses = init_items[1]
 rooms = init_items[2]
 profs = init_items[3]
 times = init_items[4]
+profcourses = init_items[5]
 
 best_fitness = 0
 generation = constraints.numgenmax
@@ -23,6 +24,8 @@ while generation > 0 and best_fitness < 100:
     print("STARTING POPULATION: ", pop)
     
     # Calculate fitness scores for each gene in population.  Send each solution by itself and get a fitness score back. Higher is better.
+    # To include room capacity vs. enrolment in fitness, pass rooms and courses dictionaries
+    # To include professor conflicts, pass profcourses dictionary
     for candidate_solution in range(constraints.pop_size):
         pop[candidate_solution]['Fitness'] = evaluation.calc_fitness(pop[candidate_solution])
 #        pop[candidate_solution].append(evaluation.calc_fitness(pop[candidate_solution]))
@@ -39,23 +42,16 @@ while generation > 0 and best_fitness < 100:
         print("Optimal solution has been identified!")
         exit()
     
- #   exit() # Place holder, below has not been re modelled 
-
-
     # Choose parent solutions.  Sends the number of parents to select, and indexed list of fitness scores
     parent_index = parent_selection.select_parents(constraints.parents, fitnesses=fitnesses.copy())
     # Display the parent indices and values for info and debugging purposes
     print("PARENTS: ", parent_index)
-    for i in parent_index:
-        print("PARENT",i,pop[i])
-    #print("FITNESS VALUES after parent selection: ", fitnesses)
 
     # Create children.  Sends the indexed list of parents, and number of children to be returned.  
     # Extend returned list of children to the population.
     pop2 = pop[:]
-    #print("POPULATION BEFORE NEW CHILDREN:",pop)
     pop.extend(recombination.create_children(len(rooms), len(times), parent_index, fitnesses, constraints.children, pop2))
-    #print("POPULATION AFTER NEW CHILDREN:",pop)
+
 # Feb 2 - Haven't touched this but it somehow seems to still work.  It should remove X solutions from the population, where X is a constant
 # and it should remove those with the lowest fitness scores.
     survivor_index = survivor_selection.cull(constraints.retirees, fitnesses=fitnesses.copy())
