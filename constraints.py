@@ -2,7 +2,7 @@
 This script contains constraint information to be used by the genetic algorithm 
 """
 
-numgenmax = 1 # maximum number of generations (avoid infinite loop)
+numgenmax = 100 # maximum number of generations (avoid infinite loop)
 #profs_num = 3 # number of profs 
 #courses_num = 10 # genes / number of courses
 #sections = ["Monday 9am", "Monday 11am", "Monday 1pm", "Monday 3pm"] # chromosomes / number of time sections

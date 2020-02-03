@@ -13,19 +13,17 @@ courses = init_items[1]
 rooms = init_items[2]
 profs = init_items[3]
 times = init_items[4]
-profcourses = init_items[5]
 
 best_fitness = 0
 generation = constraints.numgenmax
 
 # while loop with two exit criteria: optimal solution found or ran out of generations
-while generation > 0 and best_fitness < 100:
+while generation > -1 and best_fitness < 100:
     print("GENERATION: ", abs(generation-constraints.numgenmax))
     print("STARTING POPULATION: ", pop)
     
     # Calculate fitness scores for each gene in population.  Send each solution by itself and get a fitness score back. Higher is better.
-    # To include room capacity vs. enrolment in fitness, pass rooms and courses dictionaries
-    # To include professor conflicts, pass profcourses dictionary
+    # To include room capacity vs. enrolment in fitness, pass rooms and courses dictionaries (or look them up from the csv)
     for candidate_solution in range(constraints.pop_size):
         pop[candidate_solution]['Fitness'] = evaluation.calc_fitness(pop[candidate_solution])
 #        pop[candidate_solution].append(evaluation.calc_fitness(pop[candidate_solution]))
@@ -39,9 +37,12 @@ while generation > 0 and best_fitness < 100:
     # check to see if we have an optimal solution, and can end the process
     if best_fitness >= 100:
         # this should be extended to provide the optimal solution, not just saying it exists somewhere.
-        print("Optimal solution has been identified!")
+        print("Optimal solution has been identified after generation",constraints.numgenmax-generation)
         exit()
-    
+    if generation <= 0:
+        # failure. sadness
+        print("No optimal solution was found after",constraints.numgenmax,"generations.")
+        exit()
     # Choose parent solutions.  Sends the number of parents to select, and indexed list of fitness scores
     parent_index = parent_selection.select_parents(constraints.parents, fitnesses=fitnesses.copy())
     # Display the parent indices and values for info and debugging purposes
@@ -62,5 +63,6 @@ while generation > 0 and best_fitness < 100:
 
     # updating generation
     generation -= 1
+
 
 print("FINAL POPULATION: ", pop)

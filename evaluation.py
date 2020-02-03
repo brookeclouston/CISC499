@@ -7,7 +7,6 @@ Calculates a fitness value for a candidate solution based on number of conflicts
 :returns:                  Integer representing computed fitness where perfect solution is 100
 """
 def calc_fitness(candidate_solution):
-    #print("Time to calculate fitness for",candidate_solution)
     fitness = 100
     hc = 0 #hard_constraints(candidate_solution[0])
     sc = 0
