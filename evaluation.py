@@ -19,6 +19,9 @@ def calc_fitness(candidate_solution):
             new_hc = candidate_solution[course]['time']
             hc += new_hc
             #print(hc)
+    if hc > 100:
+        print("neg")
+        return 1
     return fitness - hc - sc
 
 """

@@ -78,6 +78,7 @@ def init(popsize):
             this_course = course
             timeslot = randint(0, len(times))
             room = randint(0, len(rooms))
+            prof = ""
             # Find instructor for each course
             for item in profcourses:
                 if item['Course'] == this_course:
