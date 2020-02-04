@@ -85,6 +85,7 @@ def init(popsize):
                     prof = item['Prof']
 
             candidate[this_course] = {"time": timeslot, "room": room, "prof": prof}
+        candidate["Fitness"] = 0
         population.append(candidate)
         popsize -= 1
     return [population, courses, rooms, profs, times]
