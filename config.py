@@ -13,7 +13,7 @@ def config_courses(course_file="data/courses.csv"):
     reader = csv.DictReader(open(course_file))
     dict_list = []
     for line in reader:
-        dict_list.append(line)
+        dict_list.append(dict(line))
     return dict_list
 
 
