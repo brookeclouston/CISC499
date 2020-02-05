@@ -79,16 +79,14 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             print("Child",j,children)
         elif constraints.recombtype == "crossover":
             # selects two parents at random. counts the number of 'genes' N in the first parent
-            # then a random integer X(1..N).  Genes 1..X are taken from parent A, and X+1..N are
-            # taken from parent B
+            # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are taken 
+            # from parent A, while genes X+1..N are taken from parent B
+
             parent_a_key = randint(0,len(parents))
             parent_b_key = randint(0,len(parents))
             
-
             newpop = populationcopy[:]
             #print("POPCOPY",populationcopy)
-
-
             #print("all parents", parents)
             #print("parent key", parent_a_key, parent_b_key)
 
