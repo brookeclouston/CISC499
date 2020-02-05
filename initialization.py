@@ -74,7 +74,7 @@ def init(popsize):
     population = []
     while popsize != 0:
         candidate = {}
-        for course in (x['Course'] for x in courses):
+        for course, attrs in courses.items():
             this_course = course
             timeslot = randint(0, len(times))
             room = randint(0, len(rooms))

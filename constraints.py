@@ -2,9 +2,9 @@
 This script contains constraint information to be used by the genetic algorithm 
 """
 
-numgenmax = 1 # maximum number of generations (avoid infinite loop)
+numgenmax = 100 # maximum number of generations (avoid infinite loop)
 
-pop_size = 5 # population size
+pop_size = 10 # population size
 parents = pop_size // 5 # 20% of the population each generation becomes parents
 retirees = pop_size // 5 # 20% of the population each generation 'retires' and leaves the population
 parent_selection = 'tournament'

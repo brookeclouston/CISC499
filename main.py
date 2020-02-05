@@ -20,7 +20,7 @@ generation = constraints.numgenmax
 # while loop with two exit criteria: optimal solution found or ran out of generations
 while generation > -1 and best_fitness < 100:
     print("GENERATION: ", abs(generation-constraints.numgenmax))
-    print("STARTING POPULATION: ", pop)
+    #print("STARTING POPULATION: ", pop)
     
     # Calculate fitness scores for each gene in population.  Send each solution by itself and get a fitness score back. Higher is better.
     # To include room capacity vs. enrolment in fitness, pass rooms and courses dictionaries (or look them up from the csv)

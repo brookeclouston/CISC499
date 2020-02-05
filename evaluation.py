@@ -10,20 +10,6 @@ def calc_fitness(candidate_solution):
     fitness = 100
     hc = hard_constraints(candidate_solution)
     sc = 0
-    
-    """
-    for course in candidate_solution:
-        #print(course)
-        if course == 'Fitness':
-            exit
-        else:
-            #print(candidate_solution[course],'->',candidate_solution[course]['time'])
-            new_hc = candidate_solution[course]['time']
-            hc += new_hc
-            #print(hc)
-    if hc > 100:
-        print("neg")
-        return 1
     return fitness - hc - sc
 
 """
@@ -83,22 +69,18 @@ Checks to make sure there a classes enrollment can fit in the selected room.
 :returns:                  False if conflict found, True otherwise
 """
 def check_capacity(candidate_solution):
-    #print("here", config.config_rooms())
-    #class_capacities = list(config.config_rooms().values())
+    room_capacities = list(config.config_rooms().values())
+    enrolments = config.config_courses()
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
-            print(attrs)
-            enrollment = attrs["enrolment"] #enrollment is not included in here??
+            class_enrolment = enrolments[course]["Enrolment"] 
             room = attrs["room"]
-            print("class cap  ", class_capacities)
-            print("candidate_sol  ", candidate_solution)
-            if enrollment > class_capacities[room]:
+            room_cap = room_capacities[room]["Capacity"]
+            if class_enrolment > room_cap:
                 return False
     return True
 
-
-
-
+"""
 Candidate_solution =  [
     {'CISC 101': {'time': 3, 'room': 1, 'prof': 'Dr. Hu'}, 
     'CISC 102': {'time': 0, 'room': 4, 'prof': 'Dr. Blostein'}, 
@@ -127,3 +109,4 @@ for candidate in Candidate_solution:
     x = calc_fitness(candidate) 
     print(x)
     print()
+"""
