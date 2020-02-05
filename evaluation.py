@@ -83,12 +83,12 @@ Checks to make sure there a classes enrollment can fit in the selected room.
 :returns:                  False if conflict found, True otherwise
 """
 def check_capacity(candidate_solution):
-    print(config.config_rooms())
+    #print("here", config.config_rooms())
     #class_capacities = list(config.config_rooms().values())
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
             print(attrs)
-            enrollment = attrs["enrolment"]
+            enrollment = attrs["enrolment"] #enrollment is not included in here??
             room = attrs["room"]
             print("class cap  ", class_capacities)
             print("candidate_sol  ", candidate_solution)
