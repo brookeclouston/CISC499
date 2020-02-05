@@ -26,8 +26,7 @@ while generation > -1 and best_fitness < 100:
     # To include room capacity vs. enrolment in fitness, pass rooms and courses dictionaries (or look them up from the csv)
     for candidate_solution in range(constraints.pop_size):
         pop[candidate_solution]['Fitness'] = evaluation.calc_fitness(pop[candidate_solution])
-#        pop[candidate_solution].append(evaluation.calc_fitness(pop[candidate_solution]))
-   
+
     #create a list of fitness scores
     fitnesses = [x['Fitness'] for x in pop]
     print("FITNESS VALUES: ", fitnesses)
