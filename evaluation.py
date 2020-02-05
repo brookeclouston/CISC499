@@ -8,20 +8,8 @@ Calculates a fitness value for a candidate solution based on number of conflicts
 """
 def calc_fitness(candidate_solution):
     fitness = 100
-    hc = 0 #hard_constraints(candidate_solution[0])
+    hc = hard_constraints(candidate_solution)
     sc = 0
-    for course in candidate_solution:
-        #print(course)
-        if course == 'Fitness':
-            exit
-        else:
-            #print(candidate_solution[course],'->',candidate_solution[course]['time'])
-            new_hc = candidate_solution[course]['time']
-            hc += new_hc
-            #print(hc)
-    if hc > 100:
-        print("neg")
-        return 1
     return fitness - hc - sc
 
 """
@@ -50,10 +38,11 @@ scheduled in the same room at the same time).
 def check_rooms(candidate_solution):
     rooms = []
     for course, attrs in candidate_solution.items():
-        sections_rooms = [attrs["section"], attrs["room"]]
-        if sections_rooms in rooms:
-            return False
-        rooms.append(sections_rooms)
+        if course != "Fitness":
+            sections_rooms = [attrs["time"], attrs["room"]]
+            if sections_rooms in rooms:
+                return False
+            rooms.append(sections_rooms)
     return True
 
 """ 
@@ -66,10 +55,11 @@ be in two places at once).
 def check_profs(candidate_solution):
     profs = []
     for course, attrs in candidate_solution.items():
-        sections_profs = [attrs["section"], attrs["prof"]]
-        if sections_profs in profs:
-            return False
-        profs.append(sections_profs)
+        if course != "Fitness":
+            sections_profs = [attrs["time"], attrs["prof"]]
+            if sections_profs in profs:
+                return False
+            profs.append(sections_profs)
     return True
 
 """ 
@@ -79,12 +69,44 @@ Checks to make sure there a classes enrollment can fit in the selected room.
 :returns:                  False if conflict found, True otherwise
 """
 def check_capacity(candidate_solution):
-    class_capacities = list(config.config_rooms().values())
+    room_capacities = list(config.config_rooms().values())
+    enrolments = config.config_courses()
     for course, attrs in candidate_solution.items():
-        enrollment = attrs["enrollment"]
-        room = attrs["room"]
-        print("class cap  ", class_capacities)
-        print("candidate_sol  ", candidate_solution)
-        if enrollment > class_capacities[room]:
-            return False
+        if course != "Fitness":
+            class_enrolment = enrolments[course]["Enrolment"] 
+            room = attrs["room"]
+            room_cap = room_capacities[room]["Capacity"]
+            if class_enrolment > room_cap:
+                return False
     return True
+
+"""
+Candidate_solution =  [
+    {'CISC 101': {'time': 3, 'room': 1, 'prof': 'Dr. Hu'}, 
+    'CISC 102': {'time': 0, 'room': 4, 'prof': 'Dr. Blostein'}, 
+    'CISC 103': {'time': 1, 'room': 0, 'prof': 'Prof. Dove'}, "Fitness": 0
+    }, 
+    {'CISC 101': {'time': 0, 'room': 0, 'prof': 'Dr. Hu'}, 
+    'CISC 102': {'time': 3, 'room': 0, 'prof': 'Dr. Blostein'}, 
+    'CISC 103': {'time': 2, 'room': 4, 'prof': 'Prof. Dove'}, "Fitness": 0
+    }, 
+    {'CISC 101': {'time': 2, 'room': 3, 'prof': 'Dr. Hu'}, 
+    'CISC 102': {'time': 3, 'room': 4, 'prof': 'Dr. Blostein'}, 
+    'CISC 103': {'time': 0, 'room': 1, 'prof': 'Prof. Dove'}, "Fitness": 0
+    }, 
+    {'CISC 101': {'time': 0, 'room': 0, 'prof': 'Dr. Hu'}, 
+    'CISC 102': {'time': 0, 'room': 0, 'prof': 'Dr. Blostein'}, 
+    'CISC 103': {'time': 1, 'room': 2, 'prof': 'Prof. Dove'}, "Fitness": 0
+    }, 
+    {'CISC 101': {'time': 0, 'room': 1, 'prof': 'Dr. Hu'}, 
+    'CISC 102': {'time': 3, 'room': 1, 'prof': 'Dr. Blostein'}, 
+    'CISC 103': {'time': 2, 'room': 2, 'prof': 'Prof. Dove'}, "Fitness": 0}
+    ]
+
+for candidate in Candidate_solution:
+    print()
+    print("candidate  ", candidate)
+    x = calc_fitness(candidate) 
+    print(x)
+    print()
+"""

@@ -65,6 +65,10 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             # clone simply selects a parent at random, and returns a copy of that parent as a child
             parent_key = randint(0,len(parents))
             newpop = populationcopy[:]
+            #print("new pop", newpop)
+            print("parents", parents)
+            print("parent key", parent_key)
+            #PROBLEM HERE parents is an empty list so it can not be used to index newpop
             newchild = newpop[parents[parent_key]].copy()
             print("new child:",newchild)
 
