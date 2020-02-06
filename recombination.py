@@ -66,17 +66,17 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             parent_key = randint(0,len(parents))
             newpop = populationcopy[:]
             #print("new pop", newpop)
-            print("parents", parents)
-            print("parent key", parent_key)
+            #print("parents", parents)
+            #print("parent key", parent_key)
             #PROBLEM HERE parents is an empty list so it can not be used to index newpop
             newchild = newpop[parents[parent_key]].copy()
-            print("new child:",newchild)
+            #print("new child:",newchild)
 
             # now mutate the child to introduce random variance in the subsequent population
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
-            print("after mutation:",mutechild)            
+            #print("after mutation:",mutechild)            
             children.append(mutechild)
-            print("Child",j,children)
+            #print("Child",j,children)
 
     return children
 
