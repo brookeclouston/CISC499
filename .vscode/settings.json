@@ -7,5 +7,6 @@
         "latex",
         "plaintext",
         "python"
-    ]
+    ],
+    "python.pythonPath": "C:\\Users\\rs121\\AppData\\Local\\Programs\\Python\\Python37\\python.exe"
 }
