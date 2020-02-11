@@ -17,16 +17,19 @@ Function: hard_constraints
 Checks a candidate solution for hard constraints, returns 100 if any are violated. Hard constraints
 include room capacity conflicts, room schedule conflicts and prof conflicts.
 :param candidate_solution: Proposed solution to calculate fitness for
-:returns:                  100 if any hard constraint was violated, otherwise 0
+:returns:                  A cumulative sum of hard constraints that were violated, otherwise 0.
+FIXME: currently every hard constraint that has been violated counts as 5 "points" - this should
+change in the future. 
 """
 def hard_constraints(candidate_solution):
+    hc = 0
     if not check_rooms(candidate_solution):
-        return 100
+        hc += 5
     if not check_profs(candidate_solution):
-        return 100
+        hc += 5
     if not check_capacity(candidate_solution):
-        return 100
-    return 0
+        hc += 5
+    return hc
 
 """ 
 Function: check_rooms
@@ -79,34 +82,3 @@ def check_capacity(candidate_solution):
             if class_enrolment > room_cap:
                 return False
     return True
-
-"""
-Candidate_solution =  [
-    {'CISC 101': {'time': 3, 'room': 1, 'prof': 'Dr. Hu'}, 
-    'CISC 102': {'time': 0, 'room': 4, 'prof': 'Dr. Blostein'}, 
-    'CISC 103': {'time': 1, 'room': 0, 'prof': 'Prof. Dove'}, "Fitness": 0
-    }, 
-    {'CISC 101': {'time': 0, 'room': 0, 'prof': 'Dr. Hu'}, 
-    'CISC 102': {'time': 3, 'room': 0, 'prof': 'Dr. Blostein'}, 
-    'CISC 103': {'time': 2, 'room': 4, 'prof': 'Prof. Dove'}, "Fitness": 0
-    }, 
-    {'CISC 101': {'time': 2, 'room': 3, 'prof': 'Dr. Hu'}, 
-    'CISC 102': {'time': 3, 'room': 4, 'prof': 'Dr. Blostein'}, 
-    'CISC 103': {'time': 0, 'room': 1, 'prof': 'Prof. Dove'}, "Fitness": 0
-    }, 
-    {'CISC 101': {'time': 0, 'room': 0, 'prof': 'Dr. Hu'}, 
-    'CISC 102': {'time': 0, 'room': 0, 'prof': 'Dr. Blostein'}, 
-    'CISC 103': {'time': 1, 'room': 2, 'prof': 'Prof. Dove'}, "Fitness": 0
-    }, 
-    {'CISC 101': {'time': 0, 'room': 1, 'prof': 'Dr. Hu'}, 
-    'CISC 102': {'time': 3, 'room': 1, 'prof': 'Dr. Blostein'}, 
-    'CISC 103': {'time': 2, 'room': 2, 'prof': 'Prof. Dove'}, "Fitness": 0}
-    ]
-
-for candidate in Candidate_solution:
-    print()
-    print("candidate  ", candidate)
-    x = calc_fitness(candidate) 
-    print(x)
-    print()
-"""
