@@ -57,5 +57,6 @@ def select_parents_random(num_parents, fitnesses):
             break 
     return parents
     
+    
 
 #TODO: Brooke implement different versions of parent selection -> random, weighted sum (roulette)
