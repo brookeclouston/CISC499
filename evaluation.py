@@ -23,12 +23,9 @@ change in the future.
 """
 def hard_constraints(candidate_solution):
     hc = 0
-    if not check_rooms(candidate_solution):
-        hc += 5
-    if not check_profs(candidate_solution):
-        hc += 5
-    if not check_capacity(candidate_solution):
-        hc += 5
+    hc += check_rooms(candidate_solution)
+    hc += check_profs(candidate_solution)
+    hc += check_capacity(candidate_solution)
     return hc
 
 """ 
@@ -40,13 +37,16 @@ scheduled in the same room at the same time).
 """
 def check_rooms(candidate_solution):
     rooms = []
+    returnval = 0
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
             sections_rooms = [attrs["time"], attrs["room"]]
             if sections_rooms in rooms:
-                return False
+                #print("room conflict for",course)
+                returnval += 1
             rooms.append(sections_rooms)
-    return True
+    #print("total room conflicts:",returnval)
+    return returnval
 
 """ 
 Function: check_profs
@@ -57,13 +57,16 @@ be in two places at once).
 """
 def check_profs(candidate_solution):
     profs = []
+    returnval = 0
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
             sections_profs = [attrs["time"], attrs["prof"]]
             if sections_profs in profs:
-                return False
+                #print("prof conflict for",course)
+                returnval += 1
             profs.append(sections_profs)
-    return True
+    #print("total prof conflicts:",returnval)            
+    return returnval
 
 """ 
 Function: check_capacity
@@ -74,11 +77,14 @@ Checks to make sure there a classes enrollment can fit in the selected room.
 def check_capacity(candidate_solution):
     room_capacities = list(config.config_rooms().values())
     enrolments = config.config_courses()
+    returnval = 0
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
             class_enrolment = enrolments[course]["Enrolment"] 
             room = attrs["room"]
             room_cap = room_capacities[room]["Capacity"]
             if class_enrolment > room_cap:
-                return False
-    return True
+                #print("room capacity exceeded for", course)
+                returnval += 1
+    #print("total capacity conflicts:",returnval)
+    return returnval

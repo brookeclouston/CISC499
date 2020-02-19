@@ -58,6 +58,7 @@ while generation > -1 and best_fitness < 100:
     print("RETIREES: ", survivor_index)
     pop_copy = pop.copy()
     for retiree in survivor_index:
+        pass
         pop.remove(pop_copy[retiree])
 
     # updating generation

@@ -98,9 +98,7 @@ def init(popsize):
             timeslot = ""
             room = ""
             timeslot, room, del_slot = schedule_it(this_course, courses, time_room_slots)
-            print(timeslot)
-            print(room)
-            print(del_slot)
+
             time_room_slots.remove((timeslot, room, del_slot))
             prof = ""
             # Find instructor for each course
@@ -122,21 +120,14 @@ def schedule_it(course_tbs, course_list, slot_list):
     for slot in slot_list:
         if slot[2] > course_list[course_tbs]['Enrolment']:
             return slot
-            timeslot = slot[1][1]
-            room = slot[1][0]
-            # print("in funct, before del", slot_list)
-            print(slot[1])
-            # del slot[1]
-            # print("in funct, after del", slot_list)
-            # exit()
-            return (timeslot, room, slot[0])
+
 
 # UNCOMMENT TO SEE EXAMPLE
-
+"""
 solutions = (init(1))
 
 print("Solutions: ",solutions)
-"""
+
 for i, solution in enumerate(solutions):
     print()
     if i == 0:

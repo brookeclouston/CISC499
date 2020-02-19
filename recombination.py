@@ -114,6 +114,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
         else:
             # Apply room mutation
             if np.random.rand() < mutatechance:
+                #print("M")
                 # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
                 if np.random.rand() < .5:
                     if child[course]['room'] >= num_rooms-1:
