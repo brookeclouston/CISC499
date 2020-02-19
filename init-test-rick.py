@@ -71,37 +71,40 @@ def init(popsize):
     profs = config.config_profs()
     times = config.config_times()
     profcourses = config.config_profcourselinks()
-
+    time_room_slots = []
+#    print(rooms)
+#    print()
+#    print(roomlist)
+    roomindex = 0
+    for x, val in rooms.items():
+        # print(x)
+        for y in range(len(times)):
+            time_room_slots.append((roomindex,y,val['Capacity']))
+        roomindex += 1
+#    print(time_room_slots)
+    
+    
 
     population = []
     while popsize != 0:
         candidate = {}
-        courses = config.config_courses() # reinitialize
-        time_room_slots = []
-        roomindex = 0
-        # Create list of tuples for each possible time/room slot option.  
-        # 3-tuple contains room index, time index, room capacity 
-        # e.g. (0,1,75) means room[0], time[1], room capacity = 75.
-        for x, val in rooms.items():
-            for y in range(len(times)):
-                time_room_slots.append((roomindex,y,val['Capacity']))
-            roomindex += 1
-#        print(time_room_slots)
-
-        # loop through the courses, assign largest first
 
         for x in range(len(courses)):
-            # find the next course to schedule
-            this_course = next_to_schedule(courses)
-#            timeslot = randint(0, len(times))
-#            room = randint(0, len(rooms))
-            timeslot = ""
-            room = ""
-            timeslot, room, del_slot = schedule_it(this_course, courses, time_room_slots)
-            print(timeslot)
-            print(room)
-            print(del_slot)
-            time_room_slots.remove((timeslot, room, del_slot))
+
+            largest_left = max(courses, key=lambda v: courses[v]['Enrolment'])
+#            print(largest_left)
+#            print(courses[largest_left]['Enrolment'])
+            this_course = largest_left
+            timeslot = randint(0, len(times))
+            room = randint(0, len(rooms))
+            
+            for slot in time_room_slots:
+                if slot[2] > courses[largest_left]['Enrolment']:
+                    timeslot = slot[1]
+                    room = slot[0]
+                    del slot
+                    break
+
             prof = ""
             # Find instructor for each course
             for item in profcourses:
@@ -115,28 +118,12 @@ def init(popsize):
         popsize -= 1
     return [population, courses, rooms, profs, times]
 
-def next_to_schedule(course_list):
-    return max(course_list, key=lambda v: course_list[v]['Enrolment'])
-
-def schedule_it(course_tbs, course_list, slot_list):
-    for slot in slot_list:
-        if slot[2] > course_list[course_tbs]['Enrolment']:
-            return slot
-            timeslot = slot[1][1]
-            room = slot[1][0]
-            # print("in funct, before del", slot_list)
-            print(slot[1])
-            # del slot[1]
-            # print("in funct, after del", slot_list)
-            # exit()
-            return (timeslot, room, slot[0])
-
 # UNCOMMENT TO SEE EXAMPLE
-
+"""
 solutions = (init(1))
 
 print("Solutions: ",solutions)
-"""
+
 for i, solution in enumerate(solutions):
     print()
     if i == 0:
