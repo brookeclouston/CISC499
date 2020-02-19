@@ -15,6 +15,10 @@ def select_parents(num_parents, fitnesses):
     parent_list = [0] * num_parents
     if constraints.parent_selection == "random":
         return select_parents_random(num_parents, fitnesses)
+    if constraints.parent_selection == "roulette":
+        return select_parents_roulette(num_parents, fitnesses)
+    if constraints.parent_selection == "rank":
+        return select_parents_rank(num_parents, fitnesses)
     for parent in range(num_parents):
         if constraints.parent_selection == "tournament":
             parent_list[parent] = select_parents_tournament(constraints.tournament_y, fitnesses)
@@ -57,5 +61,51 @@ def select_parents_random(num_parents, fitnesses):
             break 
     return parents
     
+"""
+Function: select_parents_roulette
+Selects parents based on a "roulette-wheel" style: the fitness list is sorted then a random integer
+between 0 and sum(fitnesses) if selected (roulette_value). The fitness list is iterated over and
+each fitness is added to the partial sum counter, while counter < roulette_value. When this constraint
+is violated, the index of the parent that violated it is added to the parent sublist.
+NOTE: this method allows for duplicate parents
+:param num_parents: Number of parents to choose
+:param fitnesses:   List of fitnesses (used to calculate possible range of solutions)
+:returns:           List of indexes of selected parents
+"""
+def select_parents_roulette(num_parents, fitness):
+    parent_sublist = [] 
+    sum_fitnesses = sum(fitness)
+    fitness_dict = {}
+    for position, value in enumerate(fitness):
+        fitness_dict[position] = value
+    sorted_fitness = {k: v for k, v in sorted(fitness_dict.items(), key=lambda item: item[1])}
+    while len(parent_sublist) < num_parents:
+        counter = 0
+        roulette_value = randint(0, sum_fitnesses)
+        for original_index, fitness in sorted_fitness.items():
+            counter += fitness
+            if counter < roulette_value:
+                continue
+            else:
+                parent_sublist.append(original_index)
+                break
+    return parent_sublist
 
-#TODO: Brooke implement different versions of parent selection -> random, weighted sum (roulette)
+"""
+Function: select_parents_rank
+Selects parents by ranking them in order of fitness and selecting the top n parents where
+n = number of parents required.
+:param num_parents: Number of parents to choose
+:param fitnesses:   List of fitnesses (used to calculate possible range of solutions)
+:returns:           List of indexes of selected parents
+"""
+def select_parents_rank(num_parents, fitness):
+    parent_sublist = [] 
+    fitness_dict = {}
+    for position, value in enumerate(fitness):
+        fitness_dict[position] = value
+    sorted_fitness = {k: v for k, v in sorted(fitness_dict.items(), key=lambda item: item[1], reverse=True)}
+    sorted_fitness_list = list(sorted_fitness)
+    for pair in range(0, num_parents):
+        parent_sublist.append(sorted_fitness_list[pair])
+    return parent_sublist
