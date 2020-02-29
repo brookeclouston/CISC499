@@ -10,7 +10,7 @@ def calc_fitness(candidate_solution):
     fitness = 100
     hc = hard_constraints(candidate_solution)
     sc = 0
-    return fitness - hc - sc
+    return max(fitness - hc - sc,1)
 
 """
 Function: hard_constraints
