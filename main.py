@@ -19,7 +19,7 @@ generation = constraints.numgenmax
 
 # while loop with two exit criteria: optimal solution found or ran out of generations
 while generation > -1 and best_fitness < 100:
-    print("GENERATION: ", abs(generation-constraints.numgenmax))
+    #print("GENERATION: ", abs(generation-constraints.numgenmax))
     #print("STARTING POPULATION: ", pop)
     
     # Calculate fitness scores for each gene in population.  Send each solution by itself and get
@@ -29,10 +29,10 @@ while generation > -1 and best_fitness < 100:
 
     # creates list of fitness scores
     fitnesses = [x['Fitness'] for x in pop]
-    print("FITNESS VALUES: ", fitnesses)
-    
+    #print("FITNESS VALUES: ", fitnesses)
+    avg_fitness = sum(fitnesses) / len(fitnesses)
     best_fitness = max(fitnesses)
-    print("BEST FITNESS:   ", best_fitness)
+    print("GENERATION: ", abs(generation-constraints.numgenmax), "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
     # Check for optimal solution 
     if best_fitness >= 100:
         # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere.
@@ -45,7 +45,7 @@ while generation > -1 and best_fitness < 100:
 
     # Choose parent solutions
     parent_index = parent_selection.select_parents(constraints.parents, fitnesses=fitnesses.copy())
-    print("PARENTS: ", parent_index)
+    #print("PARENTS: ", parent_index)
 
     # Create children.  Sends the indexed list of parents, and number of children to be returned.  
     # Extend returned list of children to the population.
@@ -55,9 +55,10 @@ while generation > -1 and best_fitness < 100:
     # FIXME: Should remove X solutions from the population, where X is a constant
     # and remove those with the lowest fitness scores.
     survivor_index = survivor_selection.cull(constraints.retirees, fitnesses=fitnesses.copy())
-    print("RETIREES: ", survivor_index)
+    #print("RETIREES: ", survivor_index)
     pop_copy = pop.copy()
     for retiree in survivor_index:
+        pass
         pop.remove(pop_copy[retiree])
 
     # updating generation

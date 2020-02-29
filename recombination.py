@@ -76,7 +76,45 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
             #print("after mutation:",mutechild)            
             children.append(mutechild)
-            #print("Child",j,children)
+            # print("Child",j,children)
+        elif constraints.recombtype == "crossover":
+            # selects two parents at random. counts the number of 'genes' N in the first parent
+            # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are taken 
+            # from parent A, while genes X+1..N are taken from parent B
+
+            parent_a_key = randint(0,len(parents))
+            parent_b_key = randint(0,len(parents))
+            
+            newpop = populationcopy[:]
+            #print("POPCOPY",populationcopy)
+            #print("all parents", parents)
+            #print("parent key", parent_a_key, parent_b_key)
+
+
+            # the magic of life
+            parent_a = newpop[parents[parent_a_key]].copy()
+            parent_b = newpop[parents[parent_b_key]].copy()
+            splitpoint = randint(1,len(parent_a))
+
+            #print("parent a:",parent_a)
+            #print("parent b:",parent_b)
+            #print("splitpoint:",splitpoint)
+
+            newchild = {}
+            for i, (k, v) in enumerate(parent_a.items()):
+                if i < splitpoint:
+                    newchild[k] = parent_a[k]
+                else:
+                    newchild[k] = parent_b[k]
+
+            #print("new child:", newchild)
+
+            # now mutate the child to introduce random variance in the subsequent population
+            mutechild = mutate(parent_a, num_rooms, num_times, constraints.mutate_chance)
+            #print("after mutation:",mutechild)            
+            children.append(mutechild)
+
+        #print("Child",j,children)
 
     return children
 
@@ -114,6 +152,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
         else:
             # Apply room mutation
             if np.random.rand() < mutatechance:
+                #print("M")
                 # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
                 if np.random.rand() < .5:
                     if child[course]['room'] >= num_rooms-1:
