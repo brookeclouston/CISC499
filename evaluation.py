@@ -76,7 +76,9 @@ Checks to make sure there a classes enrollment can fit in the selected room.
 """
 def check_capacity(candidate_solution):
     room_capacities = list(config.config_rooms().values())
+    #print(room_capacities)
     enrolments = config.config_courses()
+    #print(enrolments)
     returnval = 0
     for course, attrs in candidate_solution.items():
         if course != "Fitness":
@@ -84,7 +86,7 @@ def check_capacity(candidate_solution):
             room = attrs["room"]
             room_cap = room_capacities[room]["Capacity"]
             if class_enrolment > room_cap:
-                #print("room capacity exceeded for", course)
+                #print("room capacity", room_cap, " exceeded for", course)
                 returnval += 1
     #print("total capacity conflicts:",returnval)
     return returnval

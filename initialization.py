@@ -86,7 +86,7 @@ def init(popsize):
             for y in range(len(times)):
                 time_room_slots.append((roomindex,y,val['Capacity']))
             roomindex += 1
-#        print(time_room_slots)
+        #print(time_room_slots)
 
         # loop through the courses, assign largest first
 
@@ -97,16 +97,16 @@ def init(popsize):
 #            room = randint(0, len(rooms))
             timeslot = ""
             room = ""
-            timeslot, room, del_slot = schedule_it(this_course, courses, time_room_slots)
+            room, timeslot, del_slot = schedule_it(this_course, courses, time_room_slots)
 
-            time_room_slots.remove((timeslot, room, del_slot))
+            time_room_slots.remove((room, timeslot, del_slot))
             prof = ""
             # Find instructor for each course
             for item in profcourses:
                 if item['Course'] == this_course:
                     prof = item['Prof']
 
-            candidate[this_course] = {"time": timeslot, "room": room, "prof": prof}
+            candidate[this_course] = {"room": room, "time": timeslot, "prof": prof}
             del courses[this_course]
         candidate["Fitness"] = 0
         population.append(candidate)

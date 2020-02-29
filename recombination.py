@@ -76,7 +76,7 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
             #print("after mutation:",mutechild)            
             children.append(mutechild)
-            print("Child",j,children)
+            # print("Child",j,children)
         elif constraints.recombtype == "crossover":
             # selects two parents at random. counts the number of 'genes' N in the first parent
             # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are taken 
@@ -100,7 +100,6 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             #print("parent b:",parent_b)
             #print("splitpoint:",splitpoint)
 
-
             newchild = {}
             for i, (k, v) in enumerate(parent_a.items()):
                 if i < splitpoint:
@@ -110,12 +109,12 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
 
             #print("new child:", newchild)
 
-
             # now mutate the child to introduce random variance in the subsequent population
             mutechild = mutate(parent_a, num_rooms, num_times, constraints.mutate_chance)
             #print("after mutation:",mutechild)            
             children.append(mutechild)
-            #print("Child",j,children)
+
+        #print("Child",j,children)
 
     return children
 
