@@ -117,24 +117,54 @@ def init(popsize):
 
     return [population, courses, rooms, profs, times]
 
-def keyfunc(tup):
-    key, d = tup
-    return d["downloads"], d["date"]
 
 def next_to_schedule(course_list):
+    """
+    Function: next_to_schedule
+    
+    Takes a list of courses, finds the one with highest enrolment. NOT CURRENTLY USED
+
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students) 
+    
+    :returns:       One course entry from the list.
+
+    """
     return max(course_list, key=lambda v: course_list[v]['Enrolment'])
     
 def next_tourn_schedule(course_list):
+    """
+    Function: next_tourn_schedule
+    
+    Variation of next_to_schedule. Takes a list of courses, finds the top X with highest enrolment (X = 5 currently)
+    Selects one of the top X at random and returns that as the next course to be scheduled.
+
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students) 
+    
+    :returns:       One course entry from the list.
+
+    """
     tourn_set = dict(sorted(course_list.items(), key=lambda item: item[1]['Enrolment'])[-5:])
     win_course, enrol = random.choice(list(tourn_set.items()))
     return win_course
 
-#test_course_list = [{'Course': 'CISC101', ' Enrolment': '100'}, {'Course': 'CISC102', ' Enrolment': '50'}, {'Course': 'CISC103', ' Enrolment': '100'}]
-#courses = config.config_courses()
-#print(next_to_schedule(courses))
-#print(next_tourn_schedule(courses))
-
 def schedule_it(course_tbs, course_list, slot_list):
+    """
+    Function: schedule_it
+    
+    Schedules a single course. Takes a course name (as an index from a list of courses), schedules it to the first
+    available room that has sufficient capacity to meet the course enrolment.
+    
+    :param course_tbs: course 'to be scheduled'. Integer index referring to course_list
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students)
+    :param slot_list: List of slots, to which a given course can be scheduled. Each slot is a tuple, with format
+        (room, time, capacity)
+    
+    :returns:       A slot from a list of slot options
+
+    """
     for slot in slot_list:
         if slot[2] > course_list[course_tbs]['Enrolment']:
             return slot

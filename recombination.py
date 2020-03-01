@@ -2,7 +2,7 @@
 
 This module contains two functions, which are used to create and mutate children as part of a Genetic Algorithm (GA).
 The first function is called create_children, and it in turn calls the second function, mutate.  Generally an external
-module need only call create_children directly.
+module need only call create_children directly, but the mutate function can also be used independently.
 
 """
 
@@ -90,57 +90,38 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
                 parent_a_key = randint(0,len(parents))
                 parent_b_key = randint(0,len(parents))
             
+            # create slice of population and copies of the two new parents 
             newpop = populationcopy[:]
-            #print("POPCOPY",populationcopy)
-            #print("all parents", parents)
-            #print("parent key", parent_a_key, parent_b_key)
-
-
-            # create copies of the two new parents 
             parent_a = newpop[parents[parent_a_key]].copy()
             parent_b = newpop[parents[parent_b_key]].copy()
-            #splitpoint = randint(1,len(parent_a))
-
+            # reinitialize list of courses
             courses = config.config_courses()
-            #print(courses)
 
+            # initialize dictionary for new child. For each course in the list of courses, select the value
+            # at random from one of the parents.  This conveniently handles parents who list courses in 
+            # different order (python dictionaries are inherently unordered)
             newchild = {}
             for x in courses:
-                #print(x)
                 if np.random.rand() < .5:
                     newchild[x] = parent_a[x]
                 else:
                     newchild[x] = parent_b[x]
-            #print("parent a:",parent_a)
-            #print("parent b:",parent_b)    
-            #print("new child:", newchild)
+            #print("parent a:",parent_a) # debug code
+            #print("parent b:",parent_b) # debug code
+            #print("new child:", newchild) # debug code
 
-            #print("parent b:",parent_b)
-            #print("splitpoint:",splitpoint)
-
-
-            #for i, (k, v) in enumerate(parent_a.items()):
-            #    if i < splitpoint:
-            #        newchild[k] = parent_a[k]
-            #    else:
-            #        newchild[k] = parent_b[k]
-
-            #print("parent a:",parent_a)
-            #print("parent b:",parent_b)
-            #print("splitpoint:",splitpoint,"new child:", newchild)
+            # evaluate fitness for the new child timetable
             new_fitness = evaluation.calc_fitness(newchild)
-            #print("new fitness: ",new_fitness)
             newchild['Fitness'] = new_fitness
-            #print("newchild before mutation:",newchild)
-            # now mutate the child to introduce random variance in the subsequent population
+            #print("newchild before mutation:",newchild) # debug code
+
+            # now mutate the child to introduce random variance in the subsequent population, then calculate 
+            # the fitness after mutation
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
             mute_fitness = evaluation.calc_fitness(mutechild)
-            #print("new fitness: ",mute_fitness)
             mutechild['Fitness'] = mute_fitness
-            #print("after mutation:",mutechild)            
+            #print("after mutation:",mutechild)  # debug code        
             children.append(mutechild)
-
-        #print("Child",j,children)
 
     return children
 
@@ -148,7 +129,10 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
 def mutate(child_param, num_rooms, num_times, mutatechance):
     """Mutates a given timetable solutions, to introduce variance within a Genetic Algorithm.
 
-    Applies a mutation scheme.
+    Applies a mutation scheme.  See constraints.py for mutation chance, unless this was overriden during the function
+    call.  For each course in the timetable, the mutation chance is applied to both the room and time.  If mutation is
+    indicated, there is a 50% chance of the index in question (room or time) going up or down. This will not cause the 
+    index to exceed the minimum and maximum allowable values.
 
     Args:
         child_param: A candidate solution for a timetable. This is often a child created within this module, but not necessarily.
@@ -172,7 +156,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
     """
     child = copy.deepcopy(child_param)
     for course in child:
-        # This makes sure we ignore the Fitness key within a solution, as it is calculated from other values
+        # This makes sure we ignore the Fitness key within a solution, as it is calculated and should not be mutated
         if course == 'Fitness':
             exit
         else:
