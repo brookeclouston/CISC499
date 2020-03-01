@@ -11,6 +11,9 @@ from numpy.random import seed
 from numpy.random import randint
 import constraints
 import copy
+import evaluation
+import collections
+import config
 
 # Remove the comment from the line below to make sure the 'random'
 # numbers are generated the same each time by fixing the seed.
@@ -81,9 +84,11 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             # selects two parents at random. counts the number of 'genes' N in the first parent
             # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are taken 
             # from parent A, while genes X+1..N are taken from parent B
-
-            parent_a_key = randint(0,len(parents))
-            parent_b_key = randint(0,len(parents))
+            parent_a_key = 0
+            parent_b_key = 1
+            while (parent_a_key != parent_b_key):
+                parent_a_key = randint(0,len(parents))
+                parent_b_key = randint(0,len(parents))
             
             newpop = populationcopy[:]
             #print("POPCOPY",populationcopy)
@@ -91,26 +96,47 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             #print("parent key", parent_a_key, parent_b_key)
 
 
-            # the magic of life
+            # create copies of the two new parents 
             parent_a = newpop[parents[parent_a_key]].copy()
             parent_b = newpop[parents[parent_b_key]].copy()
-            splitpoint = randint(1,len(parent_a))
+            #splitpoint = randint(1,len(parent_a))
 
+            courses = config.config_courses()
+            #print(courses)
+
+            newchild = {}
+            for x in courses:
+                #print(x)
+                if np.random.rand() < .5:
+                    newchild[x] = parent_a[x]
+                else:
+                    newchild[x] = parent_b[x]
             #print("parent a:",parent_a)
+            #print("parent b:",parent_b)    
+            #print("new child:", newchild)
+
             #print("parent b:",parent_b)
             #print("splitpoint:",splitpoint)
 
-            newchild = {}
-            for i, (k, v) in enumerate(parent_a.items()):
-                if i < splitpoint:
-                    newchild[k] = parent_a[k]
-                else:
-                    newchild[k] = parent_b[k]
 
-            #print("new child:", newchild)
+            #for i, (k, v) in enumerate(parent_a.items()):
+            #    if i < splitpoint:
+            #        newchild[k] = parent_a[k]
+            #    else:
+            #        newchild[k] = parent_b[k]
 
+            #print("parent a:",parent_a)
+            #print("parent b:",parent_b)
+            #print("splitpoint:",splitpoint,"new child:", newchild)
+            new_fitness = evaluation.calc_fitness(newchild)
+            #print("new fitness: ",new_fitness)
+            newchild['Fitness'] = new_fitness
+            #print("newchild before mutation:",newchild)
             # now mutate the child to introduce random variance in the subsequent population
-            mutechild = mutate(parent_a, num_rooms, num_times, constraints.mutate_chance)
+            mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
+            mute_fitness = evaluation.calc_fitness(mutechild)
+            #print("new fitness: ",mute_fitness)
+            mutechild['Fitness'] = mute_fitness
             #print("after mutation:",mutechild)            
             children.append(mutechild)
 

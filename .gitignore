@@ -21,3 +21,4 @@ pip-selfcheck.json
 # End of https://www.gitignore.io/api/virtualenv
 .vscode/settings.json
 settings.json
+.vscode/settings.json

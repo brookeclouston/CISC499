@@ -8,7 +8,8 @@ to be timetabled.
 Input values will include the number of courses, number of entries
 in the timeslot/room grid, and population size.
 Return value will be list of the following:
-[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name and value=dict (keys: time, room, prof; 
+[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name
+and value=dict (keys: time, room, prof; 
 values: assigned timeslot index, assigned room index, assigned prof index). e.g. for popsize = 5:
 
 [{'CISC101': {'time': 0, 'room': 0, 'prof': 1}, 'CISC102': {'time': 3, 'room': 2, 'prof': 0}, 
@@ -48,6 +49,8 @@ from numpy.random import seed
 from numpy.random import randint
 import config
 import operator
+from operator import getitem
+import random
 
 # Remove the comment from the line below to make sure the 'random'
 # numbers are generated the same each time by fixing the seed.
@@ -59,7 +62,7 @@ def init(popsize):
     """
     Function: init
     
-    Creats inital population: times and rooms assigned randomly, profs read from configuration file
+    Creates inital population: times and rooms assigned randomly, profs read from configuration file
 
     :param popsize: Size of inital population
     
@@ -92,7 +95,7 @@ def init(popsize):
 
         for x in range(len(courses)):
             # find the next course to schedule
-            this_course = next_to_schedule(courses)
+            this_course = next_tourn_schedule(courses)
 #            timeslot = randint(0, len(times))
 #            room = randint(0, len(rooms))
             timeslot = ""
@@ -111,10 +114,25 @@ def init(popsize):
         candidate["Fitness"] = 0
         population.append(candidate)
         popsize -= 1
+
     return [population, courses, rooms, profs, times]
+
+def keyfunc(tup):
+    key, d = tup
+    return d["downloads"], d["date"]
 
 def next_to_schedule(course_list):
     return max(course_list, key=lambda v: course_list[v]['Enrolment'])
+    
+def next_tourn_schedule(course_list):
+    tourn_set = dict(sorted(course_list.items(), key=lambda item: item[1]['Enrolment'])[-5:])
+    win_course, enrol = random.choice(list(tourn_set.items()))
+    return win_course
+
+#test_course_list = [{'Course': 'CISC101', ' Enrolment': '100'}, {'Course': 'CISC102', ' Enrolment': '50'}, {'Course': 'CISC103', ' Enrolment': '100'}]
+#courses = config.config_courses()
+#print(next_to_schedule(courses))
+#print(next_tourn_schedule(courses))
 
 def schedule_it(course_tbs, course_list, slot_list):
     for slot in slot_list:
@@ -124,7 +142,7 @@ def schedule_it(course_tbs, course_list, slot_list):
 
 # UNCOMMENT TO SEE EXAMPLE
 """
-solutions = (init(1))
+solutions = (init(3))
 
 print("Solutions: ",solutions)
 
