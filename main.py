@@ -4,7 +4,10 @@ import survivor_selection
 import parent_selection
 import recombination
 import constraints
-
+import visulization
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+import time
 
 # Call the initialization script to collect configuration data from csv files and build the population for generation 0
 init_items = initialization.init(constraints.pop_size)
@@ -39,6 +42,10 @@ while generation > -1 and best_fitness < 101:
     #print("GENERATION: ", abs(generation-constraints.numgenmax), "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
     
     # Check for exit criteria: optimal solution or too many generations 
+    with open("best_fitness.txt", "a") as fitness_file:
+        fitness_file.write("\n%s,%s" % (generation, best_fitness))
+
+    # Check for optimal solution 
     if best_fitness >= 100:
         # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere.
         print("Optimal solution has been identified after generation",constraints.numgenmax-generation)
@@ -72,5 +79,6 @@ while generation > -1 and best_fitness < 101:
     # updating generation
     generation -= 1
 
-
-print("FINAL POPULATION: ", pop) # debug code, does not execute due to exit() calls in Main
+ani = animation.FuncAnimation(visulization.fig, visulization.plot_fittness, interval=1000)
+plt.show() 
+print("FINAL POPULATION: ", pop)
