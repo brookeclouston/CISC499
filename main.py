@@ -18,7 +18,8 @@ best_fitness = 0
 generation = constraints.numgenmax
 
 # while loop with two exit criteria: optimal solution found or ran out of generations
-while generation > -1 and best_fitness < 100:
+while generation > -1 and best_fitness < 101:
+    #debug code
     #print("GENERATION: ", abs(generation-constraints.numgenmax))
     #print("STARTING POPULATION: ", pop)
     
@@ -29,11 +30,15 @@ while generation > -1 and best_fitness < 100:
 
     # creates list of fitness scores
     fitnesses = [x['Fitness'] for x in pop]
-    #print("FITNESS VALUES: ", fitnesses)
+    # store average and best fitness scores within the population
     avg_fitness = sum(fitnesses) / len(fitnesses)
     best_fitness = max(fitnesses)
-    print("GENERATION: ", abs(generation-constraints.numgenmax), "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
-    # Check for optimal solution 
+    
+    # OUTPUT TO SCREEN: two options, with and without fitness matrix
+    print("GENERATION: ", abs(generation-constraints.numgenmax), "FITNESS VALUES: ", fitnesses, "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
+    #print("GENERATION: ", abs(generation-constraints.numgenmax), "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
+    
+    # Check for exit criteria: optimal solution or too many generations 
     if best_fitness >= 100:
         # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere.
         print("Optimal solution has been identified after generation",constraints.numgenmax-generation)
@@ -45,7 +50,7 @@ while generation > -1 and best_fitness < 100:
 
     # Choose parent solutions
     parent_index = parent_selection.select_parents(constraints.parents, fitnesses=fitnesses.copy())
-    #print("PARENTS: ", parent_index)
+    #print("PARENTS: ", parent_index) # debug code
 
     # Create children.  Sends the indexed list of parents, and number of children to be returned.  
     # Extend returned list of children to the population.
@@ -54,8 +59,11 @@ while generation > -1 and best_fitness < 100:
 
     # FIXME: Should remove X solutions from the population, where X is a constant
     # and remove those with the lowest fitness scores.
+    # RICK Mar1: I think it already does this?
     survivor_index = survivor_selection.cull(constraints.retirees, fitnesses=fitnesses.copy())
-    #print("RETIREES: ", survivor_index)
+
+    #print("PARENTS: ", parent_index, "RETIREES: ", survivor_index) # debug code
+    
     pop_copy = pop.copy()
     for retiree in survivor_index:
         pass
@@ -65,4 +73,4 @@ while generation > -1 and best_fitness < 100:
     generation -= 1
 
 
-print("FINAL POPULATION: ", pop)
+print("FINAL POPULATION: ", pop) # debug code, does not execute due to exit() calls in Main

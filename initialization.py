@@ -8,7 +8,8 @@ to be timetabled.
 Input values will include the number of courses, number of entries
 in the timeslot/room grid, and population size.
 Return value will be list of the following:
-[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name and value=dict (keys: time, room, prof; 
+[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name
+and value=dict (keys: time, room, prof; 
 values: assigned timeslot index, assigned room index, assigned prof index). e.g. for popsize = 5:
 
 [{'CISC101': {'time': 0, 'room': 0, 'prof': 1}, 'CISC102': {'time': 3, 'room': 2, 'prof': 0}, 
@@ -48,6 +49,8 @@ from numpy.random import seed
 from numpy.random import randint
 import config
 import operator
+from operator import getitem
+import random
 
 # Remove the comment from the line below to make sure the 'random'
 # numbers are generated the same each time by fixing the seed.
@@ -59,7 +62,7 @@ def init(popsize):
     """
     Function: init
     
-    Creats inital population: times and rooms assigned randomly, profs read from configuration file
+    Creates inital population: times and rooms assigned randomly, profs read from configuration file
 
     :param popsize: Size of inital population
     
@@ -92,7 +95,7 @@ def init(popsize):
 
         for x in range(len(courses)):
             # find the next course to schedule
-            this_course = next_to_schedule(courses)
+            this_course = next_tourn_schedule(courses)
 #            timeslot = randint(0, len(times))
 #            room = randint(0, len(rooms))
             timeslot = ""
@@ -111,12 +114,57 @@ def init(popsize):
         candidate["Fitness"] = 0
         population.append(candidate)
         popsize -= 1
+
     return [population, courses, rooms, profs, times]
 
+
 def next_to_schedule(course_list):
+    """
+    Function: next_to_schedule
+    
+    Takes a list of courses, finds the one with highest enrolment. NOT CURRENTLY USED
+
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students) 
+    
+    :returns:       One course entry from the list.
+
+    """
     return max(course_list, key=lambda v: course_list[v]['Enrolment'])
+    
+def next_tourn_schedule(course_list):
+    """
+    Function: next_tourn_schedule
+    
+    Variation of next_to_schedule. Takes a list of courses, finds the top X with highest enrolment (X = 5 currently)
+    Selects one of the top X at random and returns that as the next course to be scheduled.
+
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students) 
+    
+    :returns:       One course entry from the list.
+
+    """
+    tourn_set = dict(sorted(course_list.items(), key=lambda item: item[1]['Enrolment'])[-5:])
+    win_course, enrol = random.choice(list(tourn_set.items()))
+    return win_course
 
 def schedule_it(course_tbs, course_list, slot_list):
+    """
+    Function: schedule_it
+    
+    Schedules a single course. Takes a course name (as an index from a list of courses), schedules it to the first
+    available room that has sufficient capacity to meet the course enrolment.
+    
+    :param course_tbs: course 'to be scheduled'. Integer index referring to course_list
+    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
+        (number of students)
+    :param slot_list: List of slots, to which a given course can be scheduled. Each slot is a tuple, with format
+        (room, time, capacity)
+    
+    :returns:       A slot from a list of slot options
+
+    """
     for slot in slot_list:
         if slot[2] > course_list[course_tbs]['Enrolment']:
             return slot
@@ -124,7 +172,7 @@ def schedule_it(course_tbs, course_list, slot_list):
 
 # UNCOMMENT TO SEE EXAMPLE
 """
-solutions = (init(1))
+solutions = (init(3))
 
 print("Solutions: ",solutions)
 
