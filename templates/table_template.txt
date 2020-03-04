@@ -1,0 +1,40 @@
+<html>
+<head>
+   <title>Time Table</title>
+   <meta http-equiv="refresh" content="1" />
+</head>
+<body bgcolor="skyblue">
+<H1><FONT COLOR="DARKCYAN"><CENTER>Time Table Generation: {{GENERATION}}</FONT></H1>
+<table border="2" cellspacing="3" align="center">
+ <tr>
+ <td align="center">
+ {% for timeslot in TIMES %}
+ <td> {{timeslot.Name}}
+{% endfor %}
+</tr>
+<tr>
+{% for room in CLASSROOMS %}
+ <td align="center">{{room}}
+ {% for room_row in DATA[loop.index0] %}
+    {% if room_row.error == "ERROR" %}
+        <td align="center"><font color="red">ERROR<br>
+    {% else %}
+        {% if room_row.class == "" %}
+        <td align="center"><font color="black">---<br>
+        {% else %}
+        <td align="center"><font color="black">{{room_row.class}}
+                                                {{room_row.prof}}<br>
+        {% endif %}
+    {% endif %}
+    
+ {% endfor %}
+</tr>
+{% endfor %}
+</body>
+</html>
+
+<script>
+setInterval(function(){
+window.open('{{FILEPATH}}', "_self")
+}, 1);
+</script>
