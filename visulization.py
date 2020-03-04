@@ -1,5 +1,5 @@
 """
-This script handles the visulization for the algoirthim 
+This script handles the visualization for the algorithm 
 """
 import webbrowser
 import os
@@ -22,13 +22,8 @@ class Visulization:
         self.render_temp()
         webbrowser.register('mychrome', None, webbrowser.MacOSXOSAScript('Google Chrome'), -1) # NOTE: might be different on msft
         webbrowser.get('mychrome').open(self.filepath)
-        """
-        TODO: will need a populate function to iterate through and populate the stuff
-        will also need to figure out how to determine when there is a conflict 
-        """
     
     def render_temp(self):
-        print("rendering:  ", self.generation)
         if self.candidate_solution != "":
             clean = self.format_data()
             output = self.template.render(GENERATION=self.generation, FILEPATH=self.filepath, 
@@ -48,9 +43,6 @@ class Visulization:
         clean = self.check_profs(clean)
         clean = self.check_capacity(clean)
         return clean
-        
-        # have a nested list representing a table where cols= times, rows = rooms
-            
 
     def check_rooms(self, clean):
         rooms = []

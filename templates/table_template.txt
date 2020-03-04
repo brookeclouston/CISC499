@@ -1,6 +1,7 @@
 <html>
 <head>
    <title>Time Table</title>
+   <meta http-equiv="refresh" content="1" />
 </head>
 <body bgcolor="skyblue">
 <H1><FONT COLOR="DARKCYAN"><CENTER>Time Table Generation: {{GENERATION}}</FONT></H1>
@@ -35,5 +36,5 @@
 <script>
 setInterval(function(){
 window.open('{{FILEPATH}}', "_self")
-}, 10);
+}, 1);
 </script>

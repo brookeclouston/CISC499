@@ -70,9 +70,11 @@ while generation > -1 and best_fitness < 101:
     
     for cand in pop:
         if cand["Fitness"] == best_fitness:
-            V.generation = str(generation)
+            # tells solution to render solution with best fitness 
+            V.generation = str(abs(generation-constraints.numgenmax))
             V.candidate_solution = cand
             V.render_temp()
+            break
     
     # Check for exit criteria: optimal solution or too many generations 
    
