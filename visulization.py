@@ -1,27 +1,92 @@
 """
 This script handles the visulization for the algoirthim 
 """
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import time
+import webbrowser
+import os
+import config
+from jinja2 import Environment, FileSystemLoader
 
-fig = plt.figure()
-ax1 = fig.add_subplot(1,1,1)
+
+file_loader = FileSystemLoader('templates')
+env = Environment(loader=file_loader)
+
+
+class Visulization:
+    def __init__(self, solution):
+        self.candidate_solution = solution
+        self.template = env.get_template('table_template.txt')
+        self.filepath = "file://" + os.path.realpath("schedule.html")
+        self.generation = "0"
+        self.times = config.config_times()
+        self.classrooms = config.config_rooms()
+        self.render_temp()
+        webbrowser.register('mychrome', None, webbrowser.MacOSXOSAScript('Google Chrome'), -1) # NOTE: might be different on msft
+        webbrowser.get('mychrome').open(self.filepath)
+        """
+        TODO: will need a populate function to iterate through and populate the stuff
+        will also need to figure out how to determine when there is a conflict 
+        """
     
+    def render_temp(self):
+        print("rendering:  ", self.generation)
+        if self.candidate_solution != "":
+            clean = self.format_data()
+            output = self.template.render(GENERATION=self.generation, FILEPATH=self.filepath, 
+                                        TIMES=self.times, CLASSROOMS=self.classrooms, DATA=clean)
+            f = open('schedule.html','w')
+            f.write(output)
+            f.close()
 
-def plot_fittness(i):
-    pullData = open("best_fitness.txt","r").read()
-    dataArray = pullData.split('\n')
-    xar = []
-    yar = []
-    for eachLine in dataArray:
-        if len(eachLine)>1:
-            x,y = eachLine.split(',')
-            xar.append(int(x))
-            yar.append(int(y))
-    ax1.clear()
-    ax1.plot(xar,yar)
+    def format_data(self):
+        clean = []
+        for x in range(len(self.classrooms)):
+            new = []
+            for y in range(len(self.times)):
+                new.append({"error": "", "class": "", "prof": "", "room": list(self.classrooms.keys())[x], "time": self.times[y]["Name"]})
+            clean.append(new)
+        clean = self.check_rooms(clean)
+        clean = self.check_profs(clean)
+        clean = self.check_capacity(clean)
+        return clean
+        
+        # have a nested list representing a table where cols= times, rows = rooms
+            
 
-#ani = animation.FuncAnimation(fig, plot_fittness, interval=1000)
-#plt.show()
+    def check_rooms(self, clean):
+        rooms = []
+        for course, attrs in self.candidate_solution.items():
+            if course != "Fitness":
+                sections_rooms = [attrs["time"], attrs["room"]]
+                if sections_rooms in rooms:
+                    # conflict                                       
+                    clean[attrs["room"]][attrs["time"]]["error"] = "ERROR"
+                else:
+                    clean[attrs["room"]][attrs["time"]]["class"] = course
+                rooms.append(sections_rooms)
+        return clean
 
+    def check_profs(self, clean):
+        profs = []
+        for course, attrs in self.candidate_solution.items():
+            if course != "Fitness":
+                sections_profs = [attrs["time"], attrs["prof"]]
+                if sections_profs in profs:
+                    clean[attrs["room"]][attrs["time"]]["error"] = "ERROR"
+                else:
+                    clean[attrs["room"]][attrs["time"]]["prof"] = attrs["prof"]
+            profs.append(sections_profs)           
+        return clean
+    
+    def check_capacity(self, clean):
+        room_capacities = list(config.config_rooms().values())
+        enrolments = config.config_courses()
+        for course, attrs in self.candidate_solution.items():
+            if course != "Fitness":
+                class_enrolment = enrolments[course]["Enrolment"] 
+                room = attrs["room"]
+                room_cap = room_capacities[room]["Capacity"]
+                if class_enrolment > room_cap:
+                    clean[attrs["room"]][attrs["time"]]["error"] = "ERROR"
+        return clean
+
+                
