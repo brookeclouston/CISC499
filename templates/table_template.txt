@@ -22,7 +22,7 @@
         {% if room_row.class == "" %}
         <td align="center"><font color="black">---<br>
         {% else %}
-        <td align="center"><font color="black">{{room_row.class}}
+        <td align="center"><font color="green">{{room_row.class}}
                                                 {{room_row.prof}}<br>
         {% endif %}
     {% endif %}
