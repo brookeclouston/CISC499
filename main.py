@@ -7,6 +7,7 @@ import constraints
 from visulization import Visulization
 import matplotlib.pyplot as plt
 import time
+import os
 import random
 
  
@@ -75,12 +76,15 @@ while generation > -1 and best_fitness < 101:
             V.candidate_solution = cand
             V.render_temp()
             break
+    time.sleep(1)
     
     # Check for exit criteria: optimal solution or too many generations 
    
     # Check for optimal solution 
     if best_fitness >= 100:
-        # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere.
+        # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere
+            
+            
         print("Optimal solution has been identified after generation", constraints.numgenmax-generation)
         plt.show()
         exit()
