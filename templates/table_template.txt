@@ -3,24 +3,33 @@
    <title>Time Table</title>
    <meta http-equiv="refresh" content="1" />
 </head>
-<body bgcolor="skyblue">
-<H1><FONT COLOR="DARKCYAN"><CENTER>Time Table Generation: {{GENERATION}}</FONT></H1>
-<table border="2" cellspacing="3" align="center">
+<body bgcolor="black">
+<STYLE TYPE="text/css">
+<!--
+TD{font-family: Monaco; font-size: 10pt;}
+H1{font-family: Monaco; font-size: 30pt;}
+--->
+</STYLE>
+<H1><FONT COLOR="WHITE"><CENTER>Time Table Generation: {{GENERATION}}</FONT></H1>
+<table border="6" cellspacing="6" align="center">
  <tr>
  <td align="center">
  {% for timeslot in TIMES %}
- <td> {{timeslot.Name}}
+ <td> <font color="white">{{timeslot.Name}}
 {% endfor %}
 </tr>
 <tr>
 {% for room in CLASSROOMS %}
- <td align="center">{{room}}
+ <td align="center"> <font color="white">{{room}}
  {% for room_row in DATA[loop.index0] %}
     {% if room_row.error == "ERROR" %}
         <td align="center"><font color="red">ERROR<br>
+    {% elif room_row.warning == "WARNING" %}
+        <td align="center"><font color="yellow">{{room_row.class}}
+                                                {{room_row.prof}}<br>
     {% else %}
         {% if room_row.class == "" %}
-        <td align="center"><font color="black">---<br>
+        <td align="center"><font color="white">---<br>
         {% else %}
         <td align="center"><font color="green">{{room_row.class}}
                                                 {{room_row.prof}}<br>

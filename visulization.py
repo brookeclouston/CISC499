@@ -37,11 +37,14 @@ class Visulization:
         for x in range(len(self.classrooms)):
             new = []
             for y in range(len(self.times)):
-                new.append({"error": "", "class": "", "prof": "", "room": list(self.classrooms.keys())[x], "time": self.times[y]["Name"]})
+                new.append({"warning": "","error": "", "class": "", "prof": "", "room": list(self.classrooms.keys())[x], "time": self.times[y]["Name"]})
             clean.append(new)
         clean = self.check_rooms(clean)
         clean = self.check_profs(clean)
         clean = self.check_capacity(clean)
+        clean = self.check_prof_back_to_back(clean)
+        clean = self.check_course_back_to_back(clean)
+        clean = self.check_course_years(clean)
         return clean
 
     def check_rooms(self, clean):
@@ -81,4 +84,47 @@ class Visulization:
                     clean[attrs["room"]][attrs["time"]]["error"] = "ERROR"
         return clean
 
-                
+    def check_prof_back_to_back(self, clean):
+        prof_dict = {}
+        for course, data in self.candidate_solution.items():
+            if course == "Fitness":
+                continue
+            if data["prof"] not in prof_dict.keys():
+                prof_dict[data["prof"]] = [int(data["time"])]
+            else:
+                prof_dict[data["prof"]].append(int(data["time"]))
+            for time1 in prof_dict[data["prof"]]:
+                for time2 in prof_dict[data["prof"]]:
+                    if time1 != time2:
+                        if ((time1 + 1) == time2) or ((time1 - 1) == time2):
+                            clean[data["room"]][data["time"]]["warning"] = "WARNING"
+        return clean
+
+    def check_course_back_to_back(self, clean):
+        for course1, data1 in self.candidate_solution.items():
+            if course1 != "Fitness":
+                for course2, data2 in self.candidate_solution.items():
+                    if course2 != "Fitness":
+                        if (course1[0:4] == course2[0:4]) and (course1 != course2):
+                            if ((int(course1[5:8]) + 1) == int(course2[5:8])) or ((int(course1[5:8]) - 1) == int(course2[5:8])):
+                                # courses are consecutive in codes
+                                if ((int(data1["time"]) + 1) == int(data2["time"])) or ((int(data1["time"]) - 1) == int(data2["time"])):
+                                    clean[data1["room"]][data1["time"]]["warning"] = "WARNING"
+                                    clean[data2["room"]][data2["time"]]["warning"] = "WARNING"
+        return clean
+
+    def check_course_years(self, clean):
+        course_dict = {}
+        for course, data in self.candidate_solution.items():
+            if course == "Fitness":
+                continue
+            if course[0:6] not in course_dict.keys():
+                course_dict[course[0:6]] = [int(data["time"])]
+            else:
+                if int(data["time"]) in course_dict[course[0:6]]:
+                    clean[data["room"]][data["time"]]["warning"] = "WARNING"
+                course_dict[course[0:6]].append(int(data["time"]))
+        return clean
+
+            
+

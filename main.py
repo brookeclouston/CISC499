@@ -26,7 +26,7 @@ generation = constraints.numgenmax
 plt.show()
 axes = plt.gca()
 axes.set_xlim(0, generation)
-axes.set_ylim(90, 100) # set to 90 initially to make things more interesting 
+axes.set_ylim(0, 100) # set to 90 initially to make things more interesting 
 gen_data, avg_data, best_data = [], [], []
 avg_line, = axes.plot(gen_data, avg_data, color='red', label="Average Fitness")
 best_line = axes.plot(gen_data, best_data, color='blue', label="Best Fitness")
@@ -61,8 +61,6 @@ while generation > -1 and best_fitness < 101:
     gen_data.append(abs(generation-constraints.numgenmax))
     avg_data.append(avg_fitness)
     best_data.append(best_fitness)
-    plt.text(-0.5, -0.25, "Average Fitness: %s" % avg_fitness)
-    plt.text(-0.25, -0.25, "Best Fitness: %s" % best_fitness)
     avg_line, = axes.plot(gen_data, avg_data, color='red', label="Average Fitness")
     best_line = axes.plot(gen_data, best_data, color='blue', label="Best Fitness")
     plt.draw()
@@ -83,8 +81,6 @@ while generation > -1 and best_fitness < 101:
     # Check for optimal solution 
     if best_fitness >= 100:
         # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere
-            
-            
         print("Optimal solution has been identified after generation", constraints.numgenmax-generation)
         plt.show()
         exit()
