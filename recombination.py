@@ -111,14 +111,14 @@ def create_children(num_rooms, num_times, parents, fitnesses, num_children, popu
             #print("new child:", newchild) # debug code
 
             # evaluate fitness for the new child timetable
-            new_fitness = evaluation.calc_fitness(newchild)
+            new_fitness = evaluation.calc_fitness(newchild)[0]
             newchild['Fitness'] = new_fitness
             #print("newchild before mutation:",newchild) # debug code
 
             # now mutate the child to introduce random variance in the subsequent population, then calculate 
             # the fitness after mutation
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
-            mute_fitness = evaluation.calc_fitness(mutechild)
+            mute_fitness = evaluation.calc_fitness(mutechild)[0]
             mutechild['Fitness'] = mute_fitness
             #print("after mutation:",mutechild)  # debug code        
             children.append(mutechild)

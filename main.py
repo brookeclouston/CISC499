@@ -21,7 +21,10 @@ times = init_items[4]
 
 best_fitness = 0
 generation = constraints.numgenmax
-
+viable_gen = -1
+record_fitness = 0
+fit_log = []
+"""
 # animation stuff
 plt.show()
 axes = plt.gca()
@@ -38,6 +41,7 @@ plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 
 V = Visulization("")
+"""
 # while loop with two exit criteria: optimal solution found or ran out of generations
 while generation > -1 and best_fitness < 101:
     #debug code
@@ -46,21 +50,26 @@ while generation > -1 and best_fitness < 101:
     
     # Calculate fitness scores for each gene in population.  Send each solution by itself and get
     #  a fitness score back. Higher is better
+    fitsoft = []
     for candidate_solution in range(constraints.pop_size):
-        pop[candidate_solution]['Fitness'] = evaluation.calc_fitness(pop[candidate_solution])
-
+        pop[candidate_solution]['Fitness'] = evaluation.calc_fitness(pop[candidate_solution])[0]
+        fitsoft.append(evaluation.calc_fitness(pop[candidate_solution])[1])
+        
     # creates list of fitness scores
     fitnesses = [x['Fitness'] for x in pop]
     # store average and best fitness scores within the population
     avg_fitness = sum(fitnesses) / len(fitnesses)
     best_fitness = max(fitnesses)
-    
+    if best_fitness > record_fitness:
+        fit_log.append((best_fitness, abs(generation-constraints.numgenmax)))
+        record_fitness = best_fitness
     # OUTPUT TO SCREEN: two options, with and without fitness matrix
-    print("GENERATION: ", abs(generation-constraints.numgenmax), "FITNESS VALUES: ", fitnesses, "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
-    
+    #print("GENERATION: ", abs(generation-constraints.numgenmax), "FITNESS VALUES: ", fitnesses, "SOFT: ", fitsoft, "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
+    """
     gen_data.append(abs(generation-constraints.numgenmax))
     avg_data.append(avg_fitness)
     best_data.append(best_fitness)
+    
     avg_line, = axes.plot(gen_data, avg_data, color='red', label="Average Fitness")
     best_line = axes.plot(gen_data, best_data, color='blue', label="Best Fitness")
     plt.draw()
@@ -75,19 +84,26 @@ while generation > -1 and best_fitness < 101:
             V.render_temp()
             break
     time.sleep(1)
-    
+    """
+    # Check for first viable solution
+    if viable_gen < 0:
+        for i in range(len(fitnesses)):
+            if fitnesses[i]+fitsoft[i] == 100:
+                viable_gen = abs(generation-constraints.numgenmax)
     # Check for exit criteria: optimal solution or too many generations 
    
     # Check for optimal solution 
     if best_fitness >= 100:
         # FIXME: Should be extended to provide the optimal solution, not just saying it exists somewhere
         print("Optimal solution has been identified after generation", constraints.numgenmax-generation)
-        plt.show()
+        #plt.show()
         exit()
     if generation <= 0:
         # failure. sadness
         print("No optimal solution was found after",constraints.numgenmax,"generations.")
-        plt.show()
+        print("Viable solution was found after", viable_gen, "generations.")
+        print(fit_log)
+        #plt.show()
         exit()
 
     # Choose parent solutions

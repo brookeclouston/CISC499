@@ -18,7 +18,8 @@ def calc_fitness(candidate_solution):
     fitness = 100
     hc = hard_constraints(candidate_solution)
     sc = soft_constraints(candidate_solution)
-    return max(fitness - hc - sc,1)
+    return [max(fitness - hc - sc,1),sc]
+    #return [max(fitness - hc,1),sc]
 
 """
 Function: hard_constraints
@@ -39,7 +40,7 @@ def hard_constraints(candidate_solution):
 def soft_constraints(candidate_solution):
     sc = 0
     sc += check_prof_back_to_back(candidate_solution)
-    sc += check_course_back_to_back(candidate_solution)
+    #sc += check_course_back_to_back(candidate_solution)
     sc += check_course_years(candidate_solution)
     return sc 
 
