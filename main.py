@@ -24,7 +24,7 @@ generation = constraints.numgenmax
 viable_gen = -1
 record_fitness = 0
 fit_log = []
-"""
+
 # animation stuff
 plt.show()
 axes = plt.gca()
@@ -41,7 +41,7 @@ plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 
 V = Visulization("")
-"""
+
 # while loop with two exit criteria: optimal solution found or ran out of generations
 while generation > -1 and best_fitness < 101:
     #debug code
@@ -65,7 +65,7 @@ while generation > -1 and best_fitness < 101:
         record_fitness = best_fitness
     # OUTPUT TO SCREEN: two options, with and without fitness matrix
     #print("GENERATION: ", abs(generation-constraints.numgenmax), "FITNESS VALUES: ", fitnesses, "SOFT: ", fitsoft, "BEST FITNESS:   ", best_fitness, "AVERAGE FITNESS:   ", avg_fitness)
-    """
+    
     gen_data.append(abs(generation-constraints.numgenmax))
     avg_data.append(avg_fitness)
     best_data.append(best_fitness)
@@ -84,7 +84,7 @@ while generation > -1 and best_fitness < 101:
             V.render_temp()
             break
     time.sleep(1)
-    """
+    
     # Check for first viable solution
     if viable_gen < 0:
         for i in range(len(fitnesses)):
