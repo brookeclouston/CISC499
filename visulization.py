@@ -4,12 +4,14 @@ This script handles the visualization for the algorithm
 import webbrowser
 import os
 import config
+import sys
 from jinja2 import Environment, FileSystemLoader
 
 
 file_loader = FileSystemLoader('templates')
 env = Environment(loader=file_loader)
 
+browser_path = "\"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
 
 class Visulization:
     def __init__(self, solution):
@@ -20,7 +22,10 @@ class Visulization:
         self.times = config.config_times()
         self.classrooms = config.config_rooms()
         self.render_temp()
-        webbrowser.register('mychrome', None, webbrowser.MacOSXOSAScript('Google Chrome'), -1) # NOTE: might be different on msft
+        if sys.platform[:3] == "win":
+            webbrowser.register('mychrome', None, webbrowser.BackgroundBrowser(browser_path))
+        elif sys.platform == 'darwin':
+            webbrowser.register('mychrome', None, webbrowser.MacOSXOSAScript('Google Chrome'), -1) # NOTE: might be different on msft
         webbrowser.get('mychrome').open(self.filepath)
     
     def render_temp(self):
