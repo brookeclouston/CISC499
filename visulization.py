@@ -1,5 +1,6 @@
 """
-This script handles the visualization for the algorithm 
+This script handles the visualization for the algorithm using Jinja templating and an HTML
+webpage to continuously update visulization.
 """
 import webbrowser
 import os
@@ -30,6 +31,10 @@ class Visulization:
         webbrowser.get('mychrome').open(self.filepath)
         
     def render_temp(self):
+        """
+        Function: render_temp
+        Renders the template using Jinja2 templates
+        """
         if self.candidate_solution != "":
             clean = self.format_data()
             output = self.template.render(GENERATION=self.generation, FILEPATH=self.filepath, 
@@ -39,11 +44,18 @@ class Visulization:
             f.close()
 
     def format_data(self):
+        """
+        Function: format_data
+        Formats the data to be easily loaded into the template.
+        :return: Data that has been "cleaned" 
+        """
         clean = []
         for x in range(len(self.classrooms)):
             new = []
             for y in range(len(self.times)):
-                new.append({"warning": "","error": "", "class": "", "prof": "", "room": list(self.classrooms.keys())[x], "time": self.times[y]["Name"]})
+                new.append({"warning": "","error": "", "class": "", "prof": "",
+                            "room": list(self.classrooms.keys())[x], 
+                            "time": self.times[y]["Name"]})
             clean.append(new)
         clean = self.check_rooms(clean)
         clean = self.check_profs(clean)
@@ -54,12 +66,16 @@ class Visulization:
         return clean
 
     def check_rooms(self, clean):
+        """
+        Function: check_rooms
+        Checks for constraint violations in rooms and returns data reflecting conflict status.
+        """
         rooms = []
         for course, attrs in self.candidate_solution.items():
             if course != "Fitness":
                 sections_rooms = [attrs["time"], attrs["room"]]
                 if sections_rooms in rooms:
-                    # conflict                                       
+                    # Conflict found                                    
                     clean[attrs["room"]][attrs["time"]]["error"] = "ERROR"
                 else:
                     clean[attrs["room"]][attrs["time"]]["class"] = course
@@ -67,6 +83,10 @@ class Visulization:
         return clean
 
     def check_profs(self, clean):
+        """
+        Function: check_profs
+        Checks for constraint violations in profs and returns data reflecting conflict status.
+        """
         profs = []
         for course, attrs in self.candidate_solution.items():
             if course != "Fitness":
@@ -79,6 +99,10 @@ class Visulization:
         return clean
     
     def check_capacity(self, clean):
+        """
+        Function: check_capacity
+        Checks for constraint violations in rooms and returns data reflecting conflict status.
+        """
         room_capacities = list(config.config_rooms().values())
         enrolments = config.config_courses()
         for course, attrs in self.candidate_solution.items():
@@ -91,6 +115,10 @@ class Visulization:
         return clean
 
     def check_prof_back_to_back(self, clean):
+        """
+        Function: check_prof_back_to_back
+        Checks for constraint violations in profs and returns data reflecting conflict status.
+        """
         prof_dict = {}
         for course, data in self.candidate_solution.items():
             if course == "Fitness":
@@ -107,19 +135,29 @@ class Visulization:
         return clean
 
     def check_course_back_to_back(self, clean):
+        """
+        Function: check_course_back_to_back
+        Checks for constraint violations in courses and returns data reflecting conflict status.
+        """
         for course1, data1 in self.candidate_solution.items():
             if course1 != "Fitness":
                 for course2, data2 in self.candidate_solution.items():
                     if course2 != "Fitness":
                         if (course1[0:4] == course2[0:4]) and (course1 != course2):
-                            if ((int(course1[5:8]) + 1) == int(course2[5:8])) or ((int(course1[5:8]) - 1) == int(course2[5:8])):
+                            if ((int(course1[5:8]) + 1) == int(course2[5:8])) or \
+                               ((int(course1[5:8]) - 1) == int(course2[5:8])):
                                 # courses are consecutive in codes
-                                if ((int(data1["time"]) + 1) == int(data2["time"])) or ((int(data1["time"]) - 1) == int(data2["time"])):
+                                if ((int(data1["time"]) + 1) == int(data2["time"])) or \
+                                   ((int(data1["time"]) - 1) == int(data2["time"])):
                                     clean[data1["room"]][data1["time"]]["warning"] = "WARNING"
                                     clean[data2["room"]][data2["time"]]["warning"] = "WARNING"
         return clean
 
     def check_course_years(self, clean):
+        """
+        Function: check_course_years
+        Checks for constraint violations in courses and returns data reflecting conflict status.
+        """
         course_dict = {}
         for course, data in self.candidate_solution.items():
             if course == "Fitness":
@@ -131,6 +169,4 @@ class Visulization:
                     clean[data["room"]][data["time"]]["warning"] = "WARNING"
                 course_dict[course[0:6]].append(int(data["time"]))
         return clean
-
-            
 

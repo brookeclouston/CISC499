@@ -1,9 +1,5 @@
-""" Recombination script to generate children and apply mutation within a Genetic Algorithm.
-
-This module contains two functions, which are used to create and mutate children as part of a Genetic Algorithm (GA).
-The first function is called create_children, and it in turn calls the second function, mutate.  Generally an external
-module need only call create_children directly, but the mutate function can also be used independently.
-
+""" 
+Recombination script to generate children and apply mutation within a Genetic Algorithm.
 """
 
 import numpy as np
@@ -20,150 +16,102 @@ import config
 # seed(1)
 
 def create_children(num_rooms, num_times, parents, fitnesses, num_children, populationcopy):
-    """Creates children timetable solutions from parent generation.
-
-    Checks a global to see what type of crossover scheme should be used. Current options are:
-
-    clone: Select a parent at random and copy it to the child.  Apply mutation to introduce variance. Repeat until num_children
-        children have been created
-
-    Future options may include:
-
-    single-point: pairs of parents are selected at random to create children.  A random number X is selected between 1 and the number of courses N
-        in each solution.  The first (1-X) set of courses are taken from parent A, then the second (X-N) set are taken from parent B.
-    double-point: as single point, but two random numbers are selected, X and Y.  1-X courses from parent A, X-Y from parent B, then Y-N from parent A
-    random: for each course within the solution, a 50% chance of it being selected from parent A vs B
-
-    Args:
-        num_rooms: An integer representing the number of rooms available for scheduling. Used by mutate.
-        num_times: An integer representing the number of timeslots available for scheduling. Used by mutate.
-        parents: A list of integers, representing the index values within populationcopy, that have been selected as parents.
-        fitnesses: A list of integers, representing the fitness values of each candidate solution within populationcopy.
-        num_children: An integer representing the number of children that should be returned.
-        populationcopy: A complex data structure of nested lists and dictionaries, representing all candidate solutions within
-            the current generation.
-
-    Returns:
-        A list of children solutions, created from parents.  Each child is represented by a dictionary with keys that are course
-        names, and values that are another dictionary.  Within the nested dictionary, keys are time, room, and prof.  For
-        example, a single solution may look like this:
-
-        {'CISC101': {'time': 1, 'room': 1, 'prof': 1}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 'CISC103': {'time': 3, 'room': 0, 'prof': 2}}
-        
-        And a list of three children could therefore look like:
-
-        [{'CISC101': {'time': 1, 'room': 1, 'prof': 1}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 'CISC103': {'time': 3, 'room': 0, 'prof': 3}}, 
-        {'CISC101': {'time': 0, 'room': 2, 'prof': 1}, 'CISC102': {'time': 0, 'room': 1, 'prof': 2}, 'CISC103': {'time': 0, 'room': 0, 'prof': 2}}, 
-        {'CISC101': {'time': 2, 'room': 1, 'prof': 3}, 'CISC102': {'time': 0, 'room': 2, 'prof': 1}, 'CISC103': {'time': 3, 'room': 2, 'prof': 2}}]
-
-        If there is a "Fitness" key within the parent, it is returned as well.  For example a single child could also look like this:
-
-        {'CISC101': {'time': 1, 'room': 1, 'prof': 1}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 
-            'CISC103': {'time': 3, 'room': 0, 'prof': 2}, 'Fitness': 95}        
-
+    """Function: create_children
+    Creates children timetable solutions from parent generation. Checks a global to see what type
+    of crossover scheme should be used. Current options are:
+    clone: Select a parent at random and copy it to the child.  Apply mutation to introduce
+           variance. Repeat until num_children children have been created
+    :param: num_rooms:      Number of rooms available for scheduling. Used by mutate
+    :param: num_times:      Number of timeslots available for scheduling. Used by mutate.
+    :param: parents:        Index values within populationcopy, that have been selected as parents.
+    :param: fitnesses:      Fitness values of each candidate solution within populationcopy.
+    :param: num_children:   Number of children that should be returned.
+    :param: populationcopy: All candidate solutions within current generation.
+    return:                 List of children solutions, created from parents.  Each child is
+                            represented by a dictionary with keys that are course names, and
+                            values that are another dictionary.  Within the nested dictionary, keys
+                            are time, room, and prof.  
     """
     children = []
     for j in range(num_children):
         if constraints.recombtype == "clone":
-            # clone simply selects a parent at random, and returns a copy of that parent as a child
+            # Clone selects a parent at random, and returns a copy of that parent as a child
             parent_key = randint(0,len(parents))
             newpop = populationcopy[:]
-            #print("new pop", newpop)
-            #print("parents", parents)
-            #print("parent key", parent_key)
-            #PROBLEM HERE parents is an empty list so it can not be used to index newpop
-            newchild = newpop[parents[parent_key]].copy()
-            #print("new child:",newchild)
-
-            # now mutate the child to introduce random variance in the subsequent population
-            mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
-            #print("after mutation:",mutechild)            
+            newchild = newpop[parents[parent_key]].copy()     
+            # Mutates the child to introduce random variance in the subsequent population
+            mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)            
             children.append(mutechild)
-            # print("Child",j,children)
+       
         elif constraints.recombtype == "crossover":
-            # selects two parents at random. counts the number of 'genes' N in the first parent
-            # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are taken 
-            # from parent A, while genes X+1..N are taken from parent B
+            # Selects two parents at random. counts the number of 'genes' N in the first parent
+            # then a random integer X(1..N) to use as a splitpoint.  Genes (courses) 1..X are
+            # taken from parent A, while genes X+1..N are taken from parent B
             parent_a_key = 0
             parent_b_key = 1
             while (parent_a_key != parent_b_key):
                 parent_a_key = randint(0,len(parents))
                 parent_b_key = randint(0,len(parents))
             
-            # create slice of population and copies of the two new parents 
+            # Create slice of population and copies of the two new parents 
             newpop = populationcopy[:]
             parent_a = newpop[parents[parent_a_key]].copy()
             parent_b = newpop[parents[parent_b_key]].copy()
             # reinitialize list of courses
             courses = config.config_courses()
 
-            # initialize dictionary for new child. For each course in the list of courses, select the value
-            # at random from one of the parents.  This conveniently handles parents who list courses in 
-            # different order (python dictionaries are inherently unordered)
+            # Initialize dictionary for new child. For each course in the list of courses, select
+            # the value at random from one of the parents.  This conveniently handles parents who
+            # list courses in different order (python dictionaries are inherently unordered)
             newchild = {}
             for x in courses:
                 if np.random.rand() < .5:
                     newchild[x] = parent_a[x]
                 else:
                     newchild[x] = parent_b[x]
-            #print("parent a:",parent_a) # debug code
-            #print("parent b:",parent_b) # debug code
-            #print("new child:", newchild) # debug code
 
-            # evaluate fitness for the new child timetable
+            # Evaluate fitness for the new child timetable
             new_fitness = evaluation.calc_fitness(newchild)[0]
             newchild['Fitness'] = new_fitness
-            #print("newchild before mutation:",newchild) # debug code
-
-            # now mutate the child to introduce random variance in the subsequent population, then calculate 
-            # the fitness after mutation
+            
+            # Mutate the child to introduce random variance in the subsequent population,
+            # then calculate the fitness after mutation
             mutechild = mutate(newchild, num_rooms, num_times, constraints.mutate_chance)
             mute_fitness = evaluation.calc_fitness(mutechild)[0]
-            mutechild['Fitness'] = mute_fitness
-            #print("after mutation:",mutechild)  # debug code        
+            mutechild['Fitness'] = mute_fitness     
             children.append(mutechild)
 
     return children
 
 
 def mutate(child_param, num_rooms, num_times, mutatechance):
-    """Mutates a given timetable solutions, to introduce variance within a Genetic Algorithm.
-
-    Applies a mutation scheme.  See constraints.py for mutation chance, unless this was overriden during the function
-    call.  For each course in the timetable, the mutation chance is applied to both the room and time.  If mutation is
-    indicated, there is a 50% chance of the index in question (room or time) going up or down. This will not cause the 
-    index to exceed the minimum and maximum allowable values.
-
-    Args:
-        child_param: A candidate solution for a timetable. This is often a child created within this module, but not necessarily.
-        num_rooms: An integer representing the number of rooms available for scheduling. Ensures the mutation does not return an invalid value.
-        num_times: An integer representing the number of timeslots available for scheduling. Ensures the mutation does not return an invalid value.
-        mutatechance: A float representing the percentage chance that a given 'gene' (course) will be mutated.
-
-    Returns:
-        A single children solutions, created as a result of mutation calculations.  Each child is represented by a dictionary with 
-        keys that are course names, and values that are another dictionary.  Within the nested dictionary, keys are time, room, and 
-        prof. For example, a single solution may look like this:
-
-        {'CISC101': {'time': 1, 'room': 1, 'prof': 1}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 'CISC103': {'time': 3, 'room': 0, 'prof': 2}}
-
-        If there is a "Fitness" key within the solution provided, it is not mutated and returned as well.  For example a returned 
-        solution could also look like this:
-
-        {'CISC101': {'time': 1, 'room': 1, 'prof': 1}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 
-            'CISC103': {'time': 3, 'room': 0, 'prof': 2}, 'Fitness': 95}        
-
+    """
+    Function: mutate
+    Mutates a given timetable solutions, to introduce variance within a Genetic Algorithm.
+    Applies a mutation scheme. For each course in the timetable, the mutation chance is applied
+    to both the room and time.  If mutation is indicated, there is a 50% chance of the index in
+    question (room or time) going up or down. This will not cause the index to exceed the minimum
+    and maximum allowable values.
+    :param: child_param:  Candidate solution, often a child created within this module
+    :param: num_rooms:    Number of rooms available for scheduling
+    :param: num_times:    Number of timeslots available for scheduling. 
+    :param: mutatechance: Percentage chance that a given 'gene' (course) will be mutated.
+    :return:              Single children solutions, created as a result of mutation calculations.
+                          Each child is represented by a dictionary with keys that are course names, and
+                          values that are another dictionary.  Within the nested dictionary, keys are
+                          time, room, and prof. 
     """
     child = copy.deepcopy(child_param)
     for course in child:
-        # This makes sure we ignore the Fitness key within a solution, as it is calculated and should not be mutated
+        # This makes sure we ignore the Fitness key within a solution, as it is calculated and
+        #  should not be mutated
         if course == 'Fitness':
             exit
         else:
             # Apply room mutation
             if np.random.rand() < mutatechance:
-                #print("M")
-                # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
+                # 50% chance of mutation going up or down.  If max/min value is already reached,
+                # do nothing
                 if np.random.rand() < .5:
                     if child[course]['room'] >= num_rooms-1:
                         pass
@@ -176,6 +124,7 @@ def mutate(child_param, num_rooms, num_times, mutatechance):
                         child[course]['room'] -= 1
             else:
                 pass
+
             # Apply time mutation
             if np.random.rand() < mutatechance:
                 # 50% chance of mutation going up or down.  If max/min value is already reached, do nothing
