@@ -15,6 +15,7 @@ def calc_fitness(candidate_solution):
     fitness = 100
     hc = hard_constraints(candidate_solution)
     sc = soft_constraints(candidate_solution)
+
     return [max(fitness - hc - sc,1),sc]
 
 

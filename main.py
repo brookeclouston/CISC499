@@ -71,16 +71,16 @@ while generation > -1 and best_fitness < 101:
     plt.draw()
     plt.pause(1e-17)
     time.sleep(0.1)
-    
+    """
     for cand in pop:
         if cand["Fitness"] == best_fitness:
             # Tells solution to render solution with best fitness 
             V.generation = str(abs(generation-constraints.numgenmax))
             V.candidate_solution = cand
-            V.render_temp()
+            #V.render_temp()
             break
     time.sleep(1)
-    
+    """
     # Check for first viable solution
     if viable_gen < 0:
         for i in range(len(fitnesses)):
@@ -91,11 +91,13 @@ while generation > -1 and best_fitness < 101:
     # Check for optimal solution 
     if best_fitness >= 100:
         print("Optimal solution has been identified after generation", constraints.numgenmax-generation)
+        plt.show()
         exit()
     if generation <= 0:
         print("No optimal solution was found after",constraints.numgenmax,"generations.")
         print("Viable solution was found after", viable_gen, "generations.")
         print(fit_log)
+        plt.show()
         exit()
 
     # Choose parent solutions
