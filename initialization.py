@@ -1,49 +1,15 @@
 """
-Initialization script to be written by Rick
-
-This script will create an initial population of candidate timetables.
+This script creates an initial population of candidate timetables.
 Each timetable will be represented as an array of values.
 Each value will represent a timeslot/room pairing for one of the courses
 to be timetabled.
-Input values will include the number of courses, number of entries
-in the timeslot/room grid, and population size.
+Input values will include the number of courses, number of entries in the timeslot/room grid,
+ and population size.
 Return value will be list of the following:
-[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with key=course name
-and value=dict (keys: time, room, prof; 
+[0] - Population.  List of candidate solutions.  Each candidate solution is a dict, with
+ key=course name and value=dict (keys: time, room, prof; 
 values: assigned timeslot index, assigned room index, assigned prof index). e.g. for popsize = 5:
-
-[{'CISC101': {'time': 0, 'room': 0, 'prof': 1}, 'CISC102': {'time': 3, 'room': 2, 'prof': 0}, 
-    'CISC103': {'time': 2, 'room': 2, 'prof': 1}}, {'CISC101': {'time': 1, 'room': 3, 'prof': 2}, 
-    'CISC102': {'time': 3, 'room': 0, 'prof': 2}, 'CISC103': {'time': 2, 'room': 2, 'prof': 0}}, 
-    {'CISC101': {'time': 0, 'room': 3, 'prof': 2}, 'CISC102': {'time': 0, 'room': 4, 'prof': 1}, 
-    'CISC103': {'time': 3, 'room': 4, 'prof': 0}}, {'CISC101': {'time': 0, 'room': 3, 'prof': 0}, 
-    'CISC102': {'time': 3, 'room': 1, 'prof': 1}, 'CISC103': {'time': 1, 'room': 1, 'prof': 2}}, 
-    {'CISC101': {'time': 0, 'room': 0, 'prof': 2}, 'CISC102': {'time': 1, 'room': 2, 'prof': 2}, 
-    'CISC103': {'time': 0, 'room': 1, 'prof': 1}}]
-
-[1] - Courses.  List of courses. Each course is a dictionary, with keys and values based on config file. E.g.:
-
-[{'Course': 'CISC101', ' Enrolment': '100'}, {'Course': 'CISC102', ' Enrolment': '50'}, {'Course': 'CISC103', ' Enrolment': '100'}]
-
-[2] - Rooms.  List of rooms. Each room is a dictionary, with keys and values based on config file. e.g.:
-
-[{'Room': 'Miller 101', ' Capacity': ' 25'}, {'Room': 'Jeffery 102', ' Capacity': ' 40'}, {'Room': 'Kingston 103', ' Capacity': ' 100'}, 
-    {'Room': 'Watson 104', ' Capacity': ' 65'}, {'Room': 'BioSci 105', ' Capacity': ' 15'}]
-
-[3] - Profs.  List of instructors. Each instructor is a dictionary, with keys and values based on config file. e.g.:
-
-[{'Name': 'Dr. Hu'}, {'Name': 'Dr. Blostein'}, {'Name': 'Prof. Dove'}]
-
-[4] - Times.  List of timeslots. Each timeslot is a dictionary, with keys and values based on config file. e.g.:
-
-[{'Name': 'Monday 9am'}, {'Name': 'Monday 11am'}, {'Name': 'Monday 1pm'}, {'Name': 'Monday 3pm'}]
-
-[5] - Prof/Course Links.  Dictionary of prof/course pairings, keys and values based on config file. e.g.:
-
-[{'Prof': 'Dr. Hu', ' Course': ' CISC 101'}, {'Prof': 'Dr. Blostein', ' Course': ' CISC 102'}, {'Prof': 'Prof. Dove', ' Course': ' CISC 103'}]
-
 """
-
 import numpy
 from numpy.random import seed
 from numpy.random import randint
@@ -61,12 +27,10 @@ import random
 def init(popsize):
     """
     Function: init
-    
-    Creates inital population: times and rooms assigned randomly, profs read from configuration file
-
-    :param popsize: Size of inital population
-    
-    :returns:       List containing inital population of candidate solutions in the form of dictionaries.
+    Creates initial population: times and rooms assigned randomly, profs read from configuration
+     file
+    :param popsize: Size of initial population
+    :returns:       List containing initial population of candidate solutions (dictionary)
 
     """
     courses = config.config_courses()
@@ -74,7 +38,6 @@ def init(popsize):
     profs = config.config_profs()
     times = config.config_times()
     profcourses = config.config_profcourselinks()
-
 
     population = []
     while popsize != 0:
@@ -89,19 +52,14 @@ def init(popsize):
             for y in range(len(times)):
                 time_room_slots.append((roomindex,y,val['Capacity']))
             roomindex += 1
-        #print(time_room_slots)
 
         # loop through the courses, assign largest first
-
         for x in range(len(courses)):
             # find the next course to schedule
             this_course = next_tourn_schedule(courses)
-#            timeslot = randint(0, len(times))
-#            room = randint(0, len(rooms))
             timeslot = ""
             room = ""
             room, timeslot, del_slot = schedule_it(this_course, courses, time_room_slots)
-
             time_room_slots.remove((room, timeslot, del_slot))
             prof = ""
             # Find instructor for each course
@@ -121,68 +79,38 @@ def init(popsize):
 def next_to_schedule(course_list):
     """
     Function: next_to_schedule
-    
-    Takes a list of courses, finds the one with highest enrolment. NOT CURRENTLY USED
-
-    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
-        (number of students) 
-    
-    :returns:       One course entry from the list.
+    Takes a list of courses, finds the one with highest enrolment.
+    :param course_list: List of courses, each is a dictionary
+    :returns:           One course entry from the list.
 
     """
     return max(course_list, key=lambda v: course_list[v]['Enrolment'])
     
+
 def next_tourn_schedule(course_list):
     """
     Function: next_tourn_schedule
-    
-    Variation of next_to_schedule. Takes a list of courses, finds the top X with highest enrolment (X = 5 currently)
+    Variation of next_to_schedule. Takes a list of courses, finds the top X with highest enrolment
     Selects one of the top X at random and returns that as the next course to be scheduled.
-
-    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
-        (number of students) 
-    
+    :param course_list: List of courses, each is a dictionary 
     :returns:       One course entry from the list.
-
     """
     tourn_set = dict(sorted(course_list.items(), key=lambda item: item[1]['Enrolment'])[-5:])
     win_course, enrol = random.choice(list(tourn_set.items()))
     return win_course
 
+
 def schedule_it(course_tbs, course_list, slot_list):
     """
     Function: schedule_it
-    
-    Schedules a single course. Takes a course name (as an index from a list of courses), schedules it to the first
-    available room that has sufficient capacity to meet the course enrolment.
-    
-    :param course_tbs: course 'to be scheduled'. Integer index referring to course_list
-    :param course_list: List of courses, each is a dictionary with keys = 'Course' (course name) and 'Enrolment'
-        (number of students)
-    :param slot_list: List of slots, to which a given course can be scheduled. Each slot is a tuple, with format
-        (room, time, capacity)
-    
-    :returns:       A slot from a list of slot options
-
+    Schedules a single course. Takes a course name (as an index from a list of courses), 
+    schedules it to the first available room that has sufficient capacity to meet the course
+    enrolment.
+    :param course_tbs:  Course 'to be scheduled'. Integer index referring to course_list
+    :param course_list: List of courses, each is a dictionary
+    :param slot_list:   List of slots which a given course can be scheduled. Each slot is a tuple
+    :returns:           A slot from a list of slot options
     """
     for slot in slot_list:
         if slot[2] > course_list[course_tbs]['Enrolment']:
             return slot
-
-
-# UNCOMMENT TO SEE EXAMPLE
-"""
-solutions = (init(3))
-
-print("Solutions: ",solutions)
-
-for i, solution in enumerate(solutions):
-    print()
-    if i == 0:
-        print(solution)
-        for j, candidate in enumerate(solution):
-            print("candidate",j,":",candidate)
-    else:
-        print(solution)
-    print()
-"""
